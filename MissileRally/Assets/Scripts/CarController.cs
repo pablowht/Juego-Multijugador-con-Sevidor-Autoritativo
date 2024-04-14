@@ -10,6 +10,9 @@ public class CarController : NetworkBehaviour
 {
     #region Variables
 
+    private InputSystem _inputSystem;
+    //NetworkVariable<Quaternion> _rotation = new NetworkVariable<Quaternion>();
+
     [Header("Movement")] public List<AxleInfo> axleInfos;
     [SerializeField] private float forwardMotorTorque = 100000;
     [SerializeField] private float backwardMotorTorque = 50000;
@@ -30,10 +33,6 @@ public class CarController : NetworkBehaviour
     private Rigidbody _rigidbody;
     private float _steerHelper = 0.8f;
 
-    public override void OnNetworkSpawn()
-    {
-        base.OnNetworkSpawn();
-    }
 
     private float _currentSpeed = 0;
 
@@ -60,14 +59,21 @@ public class CarController : NetworkBehaviour
     public void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _inputSystem = InputSystem.Instance;
+    }
+
+    public void Start()
+    {
+        if (IsOwner)
+        {
+            _inputSystem.enabled = true;
+        }
     }
 
     public void Update()
     {
         Speed = _rigidbody.velocity.magnitude;
     }
-
-    
 
     public void FixedUpdate()
     {
@@ -134,10 +140,10 @@ public class CarController : NetworkBehaviour
 
     #endregion
 
-    [ServerRpc]
-    public void OnMoveServerRpc(Vector2 input)
+    public override void OnNetworkSpawn()
     {
-        //_movement = input;
+        // Cuando seas spawneado haz X...
+        base.OnNetworkSpawn();
     }
 
 

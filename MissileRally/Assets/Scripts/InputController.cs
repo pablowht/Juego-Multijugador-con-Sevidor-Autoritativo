@@ -1,4 +1,5 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,18 +14,27 @@ public class InputController : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        var input = context.ReadValue<Vector2>();
-        car.InputAcceleration = input.y;
-        car.InputSteering = input.x;
+        OnMoveServerRpc(context.ReadValue<Vector2>());
     }
 
     public void OnBrake(InputAction.CallbackContext context)
     {
-        var input = context.ReadValue<float>();
-        car.InputBrake = input;
+        OnBrakeServerRpc(context.ReadValue<float>());
     }
 
     public void OnAttack(InputAction.CallbackContext context)
     {
+    }
+
+    [ServerRpc]
+    public void OnMoveServerRpc(Vector2 input)
+    {
+        car.InputAcceleration = input.y;
+        car.InputSteering = input.x;
+    }
+
+    public void OnBrakeServerRpc(float input)
+    {
+        car.InputBrake = input;
     }
 }
