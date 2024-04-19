@@ -10,7 +10,7 @@ public class CarController : NetworkBehaviour
 {
     #region Variables
 
-    private InputSystem _inputSystem;
+    //private InputSystem _inputSystem;
     //NetworkVariable<Quaternion> _rotation = new NetworkVariable<Quaternion>();
 
     [Header("Movement")] public List<AxleInfo> axleInfos;
@@ -59,15 +59,6 @@ public class CarController : NetworkBehaviour
     public void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _inputSystem = InputSystem.Instance;
-    }
-
-    public void Start()
-    {
-        if (IsOwner)
-        {
-            _inputSystem.enabled = true;
-        }
     }
 
     public void Update()
@@ -140,11 +131,6 @@ public class CarController : NetworkBehaviour
 
     #endregion
 
-    public override void OnNetworkSpawn()
-    {
-        // Cuando seas spawneado haz X...
-        base.OnNetworkSpawn();
-    }
 
 
     #region Methods
