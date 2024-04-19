@@ -33,13 +33,13 @@ public class Player : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        base.OnNetworkSpawn();
+
         SetupPlayer();
     }
 
     void SetupPlayer()
     {
-        base.OnNetworkSpawn();
-        
         if (IsOwner)
         {
             GetComponent<PlayerInput>().enabled = true;
@@ -52,8 +52,7 @@ public class Player : NetworkBehaviour
 
             Attack.performed += input.OnBrake;
             Attack.Enable();
-            //Asignar la camara, 
+            //Asignar la camara, como un hijo del player
         }
     }
-
 }

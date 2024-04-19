@@ -29,7 +29,7 @@ public class InputController : MonoBehaviour
     [ServerRpc]
     public void OnMoveServerRpc(Vector2 input)
     {
-        car.InputAcceleration = input.y;
+        car.InputAcceleration = -input.y;
         car.InputSteering = input.x;
     }
 
