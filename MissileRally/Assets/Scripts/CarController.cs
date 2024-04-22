@@ -131,8 +131,6 @@ public class CarController : NetworkBehaviour
 
     #endregion
 
-
-
     #region Methods
 
     // crude traction control that reduces the power to wheel if the car is wheel spinning too much

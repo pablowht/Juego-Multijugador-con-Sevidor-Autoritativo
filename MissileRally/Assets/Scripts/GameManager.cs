@@ -1,4 +1,5 @@
 using Unity.Netcode;
+using UnityEditor;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -43,7 +44,6 @@ public class GameManager : MonoBehaviour
     private void OnClientConnected(ulong obj)
     {
         var player = Instantiate(_prefabPlayer);
-        //player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
         player.GetComponent<NetworkObject>().SpawnWithOwnership(obj);
     }
 

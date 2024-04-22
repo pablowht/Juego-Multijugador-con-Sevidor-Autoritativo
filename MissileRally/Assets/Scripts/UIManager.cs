@@ -9,8 +9,19 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    const int maxConnections = 50;
+    // Se usa la variable de GameManager para el maxConnections (numPlayers)
+    //const int maxConnections = 50;
     string joinCode = "Enter room code...";
+
+    async void Start()
+    {
+        await UnityServices.InitializeAsync();
+
+        AuthenticationService.Instance.SignedIn +=
+            () => print($"New player {AuthenticationService.Instance.PlayerId} connected");
+
+        await AuthenticationService.Instance.SignInAnonymouslyAsync();
+    }
 
     void OnGUI()
     {
@@ -35,37 +46,6 @@ public class UIManager : MonoBehaviour
         joinCode = GUILayout.TextField(joinCode);
     }
 
-    //metodo asincrono: voy a tener una parte de mi codigo parada, me voy a otro lado
-    //a seguir con mis cosas y luego sigo
-    async void StartHost()
-    {
-        await UnityServices.InitializeAsync();
-        if (!AuthenticationService.Instance.IsSignedIn)
-        {
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        }
-        Allocation allocation = await RelayService.Instance.CreateAllocationAsync(maxConnections);
-        NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(allocation, "dtls"));
-        joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-
-        NetworkManager.Singleton.StartHost();
-
-    }
-
-    async void StartClient()
-    {
-        await UnityServices.InitializeAsync();
-        if (!AuthenticationService.Instance.IsSignedIn)
-        {
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        }
-
-        var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode: joinCode);
-        NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
-
-        NetworkManager.Singleton.StartClient();
-    }
-
     void StatusLabels()
     {
         var mode = NetworkManager.Singleton.IsHost ?
@@ -75,6 +55,53 @@ public class UIManager : MonoBehaviour
             NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
         GUILayout.Label("Mode: " + mode);
         GUILayout.Label("Room: " + joinCode);
-
     }
+
+    //metodo asincrono: voy a tener una parte de mi codigo parada, me voy a otro lado
+    //a seguir con mis cosas y luego sigo
+    async void StartHost()
+    {
+        try
+        {
+            await UnityServices.InitializeAsync();
+            if (!AuthenticationService.Instance.IsSignedIn)
+            {
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            }
+
+            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(GameManager.Instance.numPlayers);
+            NetworkManager.Singleton.GetComponent<UnityTransport>()
+                .SetRelayServerData(new RelayServerData(allocation, "dtls"));
+            joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+
+            NetworkManager.Singleton.StartHost();
+        }
+        catch (RelayServiceException e)
+        {
+            print(e);
+        }
+    }
+
+    async void StartClient()
+    {
+        try
+        {
+            await UnityServices.InitializeAsync();
+            if (!AuthenticationService.Instance.IsSignedIn)
+            {
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            }
+
+            var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode: joinCode);
+            NetworkManager.Singleton.GetComponent<UnityTransport>()
+                .SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
+            NetworkManager.Singleton.StartClient();
+        }
+        catch (RelayServiceException e)
+        {
+            print(e);
+        }
+    }
+
+    
 }

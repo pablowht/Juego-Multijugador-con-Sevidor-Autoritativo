@@ -33,8 +33,6 @@ public class Player : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        base.OnNetworkSpawn();
-
         SetupPlayer();
     }
 
@@ -52,7 +50,8 @@ public class Player : NetworkBehaviour
 
             Attack.performed += input.OnBrake;
             Attack.Enable();
-            //Asignar la camara, como un hijo del player
+            //Asignar la camara, 
         }
     }
+
 }
