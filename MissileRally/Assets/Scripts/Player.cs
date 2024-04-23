@@ -16,9 +16,12 @@ public class Player : NetworkBehaviour
     public int CurrentPosition { get; set; }
     public int CurrentLap { get; set; }
 
-    public InputAction Move;
-    public InputAction Brake;
-    public InputAction Attack;
+    private InputAction Move;
+    private InputAction Brake;
+    private InputAction Attack;
+
+    private NetworkVariable<Transform> _transform = new NetworkVariable<Transform>();
+    Transform _playerTransform;
 
 
     public override string ToString()
@@ -28,6 +31,7 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
+        //_playerTransform = transform;
         GameManager.Instance.currentRace.AddPlayer(this);
     }
 
@@ -51,7 +55,13 @@ public class Player : NetworkBehaviour
             Attack.performed += input.OnBrake;
             Attack.Enable();
             //Asignar la camara, 
+            //_transform.OnValueChanged += OnMovementChange;
         }
+    }
+
+    private void OnMovementChange(Transform previousTransform, Transform newTransform)
+    {
+        _playerTransform = newTransform;
     }
 
 }

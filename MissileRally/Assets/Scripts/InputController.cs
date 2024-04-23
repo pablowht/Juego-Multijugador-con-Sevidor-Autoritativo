@@ -7,6 +7,7 @@ public class InputController : MonoBehaviour
 {
     private CarController car;
 
+
     private void Start()
     {
         car = GetComponent<Player>().car.GetComponent<CarController>();

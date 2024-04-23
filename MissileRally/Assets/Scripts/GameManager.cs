@@ -43,8 +43,11 @@ public class GameManager : MonoBehaviour
 
     private void OnClientConnected(ulong obj)
     {
-        var player = Instantiate(_prefabPlayer);
-        player.GetComponent<NetworkObject>().SpawnWithOwnership(obj);
+        if (NetworkManager.Singleton.IsServer)
+        {
+            var player = Instantiate(_prefabPlayer);
+            player.GetComponent<NetworkObject>().SpawnWithOwnership(obj);
+        }
     }
 
     public void OnDestroy()
