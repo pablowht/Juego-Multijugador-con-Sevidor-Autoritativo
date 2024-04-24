@@ -69,7 +69,7 @@ public class CarController : NetworkBehaviour
     public void FixedUpdate()
     {
         if (!IsSpawned) return;
-        if (IsServer)
+        if (IsOwner)
         {
             InputSteering = Mathf.Clamp(InputSteering, -1, 1);
             InputAcceleration = Mathf.Clamp(InputAcceleration, -1, 1);

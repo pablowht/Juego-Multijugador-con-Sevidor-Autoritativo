@@ -20,8 +20,10 @@ public class Player : NetworkBehaviour
     private InputAction Brake;
     private InputAction Attack;
 
-    private NetworkVariable<Transform> _transform = new NetworkVariable<Transform>();
-    Transform _playerTransform;
+    //private NetworkVariable<Vector3> _nPlayerPosition = NetworkVariable<Vector3>()
+    private readonly NetworkVariable<Vector3> _nPlayerPosition = new(writePerm: NetworkVariableWritePermission.Owner);
+    private readonly NetworkVariable<Quaternion> _nPlayerRotation = new(writePerm: NetworkVariableWritePermission.Owner);
+    private Transform _playerTransform;
 
 
     public override string ToString()
@@ -55,13 +57,21 @@ public class Player : NetworkBehaviour
             Attack.performed += input.OnBrake;
             Attack.Enable();
             //Asignar la camara, 
-            //_transform.OnValueChanged += OnMovementChange;
+
+            //_nPlayerPosition.OnValueChanged += OnPositionChange;
         }
     }
 
-    private void OnMovementChange(Transform previousTransform, Transform newTransform)
+    private void OnPositionChange(Vector3 previousValue, Vector3 newValue)
     {
-        _playerTransform = newTransform;
+        if (IsOwner)
+        {
+            _nPlayerPosition.Value = _playerTransform.position;
+        }
+        else
+        {
+            _playerTransform.position = newValue;
+        }
+        
     }
-
 }
