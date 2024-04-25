@@ -13,12 +13,14 @@ public class Player : NetworkBehaviour
 
     // Race Info
     public GameObject car;
+    public GameObject _camera;
     public int CurrentPosition { get; set; }
     public int CurrentLap { get; set; }
 
     private InputAction Move;
     private InputAction Brake;
     private InputAction Attack;
+    
 
     //private NetworkVariable<Vector3> _nPlayerPosition = NetworkVariable<Vector3>()
     //private readonly NetworkVariable<Vector3> _nPlayerPosition = new(writePerm: NetworkVariableWritePermission.Owner);
@@ -35,6 +37,8 @@ public class Player : NetworkBehaviour
     {
         //_playerTransform = transform;
         GameManager.Instance.currentRace.AddPlayer(this);
+        //Camera.main.enabled = false;
+        //_camera.SetActive(true);
     }
 
     public override void OnNetworkSpawn()
@@ -61,7 +65,18 @@ public class Player : NetworkBehaviour
             //_playerTransform = transform;
             //_nPlayerPosition.OnValueChanged += OnPositionChange;
             //_nPlayerRotation.OnValueChanged += OnRotationChange;
+
+            //if (GameManager.Instance.currentRace.numPlayers > 0)
+            //{
+
+            //}
+            //print(GameManager.Instance.currentRace.numPlayers);
+
+            Camera.main.enabled = false;
+            _camera.SetActive(true);
+
         }
+
     }
 
     //private void OnPositionChange(Vector3 previousValue, Vector3 newValue)

@@ -10,7 +10,7 @@ public class InputController : MonoBehaviour
     private Transform _playerTransform;
     private NetworkVariable<Quaternion> _nPlayerRotation = new NetworkVariable<Quaternion>();
     private NetworkVariable<Vector2> _nPlayerPosition = new NetworkVariable<Vector2>();
-
+    Transform _cameraTransform;
     private void Start()
     {
         car = GetComponent<Player>().car.GetComponent<CarController>();
@@ -18,6 +18,7 @@ public class InputController : MonoBehaviour
 
         _nPlayerPosition.OnValueChanged += OnPositionChange;
         _nPlayerRotation.OnValueChanged += OnRotationChange;
+        _cameraTransform = Camera.main.transform;
     }
 
     public void OnMove(InputAction.CallbackContext context)
