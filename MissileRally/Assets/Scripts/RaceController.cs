@@ -69,7 +69,7 @@ public class RaceController : MonoBehaviour
             myRaceOrder += player.Name + " ";
         }
 
-        Debug.Log("Race order: " + myRaceOrder);
+        //Debug.Log("Race order: " + myRaceOrder);
     }
 
     float ComputeCarArcLength(int id)

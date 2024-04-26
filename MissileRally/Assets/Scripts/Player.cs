@@ -35,10 +35,11 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
-        //_playerTransform = transform;
         GameManager.Instance.currentRace.AddPlayer(this);
-        //Camera.main.enabled = false;
-        //_camera.SetActive(true);
+        if (IsHost)
+        {
+            Camera.main.enabled = false;
+        }
     }
 
     public override void OnNetworkSpawn()
@@ -50,11 +51,10 @@ public class Player : NetworkBehaviour
     {
         if (IsOwner)
         {
-            Camera.main.enabled = false;
             _camera.SetActive(true);
             //_nPlayerPosition.OnValueChanged += OnPositionChange;
             //_nPlayerRotation.OnValueChanged += OnRotationChange;
-
+            print(NetworkObject.OwnerClientId);
             GetComponent<PlayerInput>().enabled = true;
             InputController input = GetComponent<InputController>();
 

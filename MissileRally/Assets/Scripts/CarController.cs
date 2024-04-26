@@ -61,7 +61,7 @@ public class CarController : NetworkBehaviour
     public void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        //if (IsOwner)
+        //if (IsServer)
         //{
         //    _nPlayerPosition.OnValueChanged += OnPositionChange;
         //    _nPlayerRotation.OnValueChanged += OnRotationChange;
@@ -76,7 +76,7 @@ public class CarController : NetworkBehaviour
     public void FixedUpdate()
     {
         if (!IsSpawned) return;
-        if (IsOwner)
+        if (IsServer)
         {
             InputSteering = Mathf.Clamp(InputSteering, -1, 1);
             InputAcceleration = Mathf.Clamp(InputAcceleration, -1, 1);
