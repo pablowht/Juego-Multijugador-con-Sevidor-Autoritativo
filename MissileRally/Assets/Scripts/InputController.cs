@@ -8,17 +8,15 @@ public class InputController : MonoBehaviour
     //private readonly NetworkVariable<Vector3> _nPlayerPosition = new(writePerm: NetworkVariableWritePermission.Owner);
     //private readonly NetworkVariable<Quaternion> _nPlayerRotation = new(writePerm: NetworkVariableWritePermission.Owner);
     private Transform _playerTransform;
-    private NetworkVariable<Quaternion> _nPlayerRotation = new NetworkVariable<Quaternion>();
-    private NetworkVariable<Vector2> _nPlayerPosition = new NetworkVariable<Vector2>();
-    Transform _cameraTransform;
+    //private NetworkVariable<Quaternion> _nPlayerRotation = new NetworkVariable<Quaternion>();
+    //private NetworkVariable<Vector2> _nPlayerPosition = new NetworkVariable<Vector2>();
     private void Start()
     {
         car = GetComponent<Player>().car.GetComponent<CarController>();
         _playerTransform = car.transform;
 
-        _nPlayerPosition.OnValueChanged += OnPositionChange;
-        _nPlayerRotation.OnValueChanged += OnRotationChange;
-        _cameraTransform = Camera.main.transform;
+        //_nPlayerPosition.OnValueChanged += OnPositionChange;
+        //_nPlayerRotation.OnValueChanged += OnRotationChange;
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -47,14 +45,14 @@ public class InputController : MonoBehaviour
         car.InputBrake = input;
     }
 
-    private void OnPositionChange(Vector2 previousValue, Vector2 newValue)
-    {
-        print("el valor posicion ha cambiado");
-        _playerTransform.position = newValue;
-    }
-    private void OnRotationChange(Quaternion previousValue, Quaternion newValue)
-    {
-        print("el valor rotacion ha cambiado");
-        _playerTransform.rotation = newValue;
-    }
+    //private void OnPositionChange(Vector2 previousValue, Vector2 newValue)
+    //{
+    //    print("el valor posicion ha cambiado");
+    //    _playerTransform.position = newValue;
+    //}
+    //private void OnRotationChange(Quaternion previousValue, Quaternion newValue)
+    //{
+    //    print("el valor rotacion ha cambiado");
+    //    _playerTransform.rotation = newValue;
+    //}
 }

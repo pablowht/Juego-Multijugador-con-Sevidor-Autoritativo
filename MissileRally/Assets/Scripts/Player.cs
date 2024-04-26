@@ -50,8 +50,14 @@ public class Player : NetworkBehaviour
     {
         if (IsOwner)
         {
+            Camera.main.enabled = false;
+            _camera.SetActive(true);
+            //_nPlayerPosition.OnValueChanged += OnPositionChange;
+            //_nPlayerRotation.OnValueChanged += OnRotationChange;
+
             GetComponent<PlayerInput>().enabled = true;
             InputController input = GetComponent<InputController>();
+
             Move.performed += input.OnMove;
             Move.Enable();
 
@@ -60,23 +66,11 @@ public class Player : NetworkBehaviour
 
             Attack.performed += input.OnBrake;
             Attack.Enable();
-            //Asignar la camara, 
 
             //_playerTransform = transform;
             //_nPlayerPosition.OnValueChanged += OnPositionChange;
             //_nPlayerRotation.OnValueChanged += OnRotationChange;
-
-            //if (GameManager.Instance.currentRace.numPlayers > 0)
-            //{
-
-            //}
-            //print(GameManager.Instance.currentRace.numPlayers);
-
-            Camera.main.enabled = false;
-            _camera.SetActive(true);
-
         }
-
     }
 
     //private void OnPositionChange(Vector3 previousValue, Vector3 newValue)

@@ -10,9 +10,6 @@ public class CarController : NetworkBehaviour
 {
     #region Variables
 
-    //private InputSystem _inputSystem;
-    //NetworkVariable<Quaternion> _rotation = new NetworkVariable<Quaternion>();
-
     [Header("Movement")] public List<AxleInfo> axleInfos;
     [SerializeField] private float forwardMotorTorque = 100000;
     [SerializeField] private float backwardMotorTorque = 50000;
@@ -52,6 +49,11 @@ public class CarController : NetworkBehaviour
 
     public event OnSpeedChangeDelegate OnSpeedChangeEvent;
 
+    //
+    //private NetworkVariable<float> _nPlayerRotation = new NetworkVariable<float>();
+    //private NetworkVariable<float> _nPlayerPosition = new NetworkVariable<float>();
+
+
     #endregion Variables
 
     #region Unity Callbacks
@@ -59,6 +61,11 @@ public class CarController : NetworkBehaviour
     public void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        //if (IsOwner)
+        //{
+        //    _nPlayerPosition.OnValueChanged += OnPositionChange;
+        //    _nPlayerRotation.OnValueChanged += OnRotationChange;
+        //}
     }
 
     public void Update()
@@ -218,4 +225,18 @@ public class CarController : NetworkBehaviour
     }
 
     #endregion
+
+
+    //private void OnPositionChange(float previousValue, float newValue)
+    //{
+    //    print("el valor posicion ha cambiado");
+    //    //_playerTransform.position = newValue;
+    //    InputAcceleration = Mathf.Clamp(newValue, -1, 1);
+    //}
+    //private void OnRotationChange(float previousValue, float newValue)
+    //{
+    //    print("el valor rotacion ha cambiado");
+    //    //_playerTransform.rotation = newValue;
+    //    InputSteering = Mathf.Clamp(newValue, -1, 1);
+    //}
 }
