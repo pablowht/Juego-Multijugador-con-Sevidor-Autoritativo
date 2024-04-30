@@ -1,3 +1,4 @@
+using Cinemachine;
 using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
@@ -11,7 +12,7 @@ public class GameManager : MonoBehaviour
     // Cosas nuestras
     NetworkManager _ntmanager;
     GameObject _prefabPlayer;
-
+    public CinemachineVirtualCamera _virtualCamera;
     public static GameManager Instance { get; private set; }
 
     void Awake()
@@ -46,8 +47,8 @@ public class GameManager : MonoBehaviour
         if (NetworkManager.Singleton.IsServer)
         {
             var player = Instantiate(_prefabPlayer);
-            player.GetComponent<NetworkObject>().SpawnWithOwnership(obj);
-            //player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
+            //player.GetComponent<NetworkObject>().SpawnWithOwnership(obj);
+            player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
         }
     }
 

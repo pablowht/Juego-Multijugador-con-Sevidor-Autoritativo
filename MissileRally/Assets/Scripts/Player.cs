@@ -1,3 +1,4 @@
+using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,15 +18,17 @@ public class Player : NetworkBehaviour
     public int CurrentPosition { get; set; }
     public int CurrentLap { get; set; }
 
-    private InputAction Move;
-    private InputAction Brake;
-    private InputAction Attack;
-    
+     private InputAction Move = new InputAction();
+     private InputAction Brake = new InputAction();
+     private InputAction Attack = new InputAction();
+
 
     //private NetworkVariable<Vector3> _nPlayerPosition = NetworkVariable<Vector3>()
     //private readonly NetworkVariable<Vector3> _nPlayerPosition = new(writePerm: NetworkVariableWritePermission.Owner);
     //private readonly NetworkVariable<Quaternion> _nPlayerRotation = new(writePerm: NetworkVariableWritePermission.Owner);
     //private Transform _playerTransform;
+    CinemachineVirtualCamera _vCamera;
+
 
 
     public override string ToString()
@@ -36,10 +39,10 @@ public class Player : NetworkBehaviour
     private void Start()
     {
         GameManager.Instance.currentRace.AddPlayer(this);
-        if (IsHost)
-        {
-            Camera.main.enabled = false;
-        }
+        //Move = GetComponent<PlayerInput>().actions.FindAction("Move");
+        //Brake = GetComponent<PlayerInput>().actions.FindAction("Brake");
+        //Attack = GetComponent<PlayerInput>().actions.FindAction("Attack");
+        //_vCamera = GameManager.Instance._virtualCamera;
     }
 
     public override void OnNetworkSpawn()
@@ -51,10 +54,15 @@ public class Player : NetworkBehaviour
     {
         if (IsOwner)
         {
-            _camera.SetActive(true);
+            _vCamera = GameManager.Instance._virtualCamera;
+            print(_vCamera);
+            _vCamera.Follow = car.GetComponent<Transform>();
+            _vCamera.LookAt = car.GetComponent<Transform>();
+            //_vCamera.gameObject.transform.rotation = new Quaternion(30.964f, 180, 0,0);
+            //_vCamera.LookAt = new Transform(30.964f, 180, 0, 0);
+            
             //_nPlayerPosition.OnValueChanged += OnPositionChange;
             //_nPlayerRotation.OnValueChanged += OnRotationChange;
-            print(NetworkObject.OwnerClientId);
             GetComponent<PlayerInput>().enabled = true;
             InputController input = GetComponent<InputController>();
 
