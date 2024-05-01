@@ -47,7 +47,6 @@ public class GameManager : MonoBehaviour
         if (NetworkManager.Singleton.IsServer)
         {
             var player = Instantiate(_prefabPlayer);
-            //player.GetComponent<NetworkObject>().SpawnWithOwnership(obj);
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
         }
     }
