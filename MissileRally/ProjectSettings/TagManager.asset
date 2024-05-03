@@ -9,6 +9,7 @@ TagManager:
   - Cesped
   - Obstacle
   - VirtualTag
+  - PlayerPosition
   layers:
   - Default
   - TransparentFX

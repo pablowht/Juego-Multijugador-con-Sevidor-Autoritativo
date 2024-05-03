@@ -86,10 +86,10 @@ public class Player : NetworkBehaviour
         _vCamera.Follow = car.GetComponent<Transform>();
         _vCamera.LookAt = car.GetComponent<Transform>();
     }
+
     void SetupPosition()
     {
-        int idx = OwnerClientId.GetHashCode();
-        car.transform.position = GameManager.Instance.arrayPositions[idx].position;
+        car.transform.position = GameManager.Instance.currentCircuit._playersPositions[(int)OwnerClientId].position;
     }
 
     void SetupInput()
@@ -132,6 +132,5 @@ public class Player : NetworkBehaviour
     //    {
     //        _playerTransform.rotation = newValue;
     //    }
-        
     //}
 }
