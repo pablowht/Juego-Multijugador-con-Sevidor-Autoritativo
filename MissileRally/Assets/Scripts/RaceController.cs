@@ -33,6 +33,10 @@ public class RaceController : MonoBehaviour
     {
         _players.Add(player);
     }
+    public void RemovePlayer(Player player)
+    {
+        _players.Remove(player);
+    }
 
     private class PlayerInfoComparer : Comparer<Player>
     {

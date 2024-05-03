@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,6 +24,7 @@ public class Player : NetworkBehaviour
     private InputAction Brake = new InputAction();
     private InputAction Attack = new InputAction();
 
+
     public NetworkVariable<Vector3> CarPosition = new NetworkVariable<Vector3>();
 
     //private NetworkVariable<Vector3> _nPlayerPosition = NetworkVariable<Vector3>()
@@ -38,7 +40,6 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
-        GameManager.Instance.currentRace.AddPlayer(this);
 
     }
 
@@ -46,7 +47,7 @@ public class Player : NetworkBehaviour
     {
         if (IsServer)
         {
-            //Sé que es mejor suscribirse y tal pero es por probar
+            // Sé que es mejor suscribirse y tal pero es por probar
             // En el host entra, pero en el cliente no porque no es server...
             // Pero si se saca de aquí da error porque solo el server tiene derecho a escribir en las network variables
             // Utilizando un ServerRpc no me ha funcionado muy bien
@@ -64,11 +65,14 @@ public class Player : NetworkBehaviour
     {
         if (IsOwner)
         {
+            GameManager.Instance.currentRace.AddPlayer(this);
+
             SetupCamera();
 
             namePlayer.SetText(OwnerClientId.ToString());
 
             SetupInput();
+            SetupPosition();
 
             //_nPlayerPosition.OnValueChanged += OnPositionChange;
             //_nPlayerRotation.OnValueChanged += OnRotationChange;
@@ -87,6 +91,11 @@ public class Player : NetworkBehaviour
         _vCamera.Follow = car.GetComponent<Transform>();
         _vCamera.LookAt = car.GetComponent<Transform>();
     }
+    void SetupPosition()
+    {
+        int idx = OwnerClientId.GetHashCode();
+        car.transform.position = GameManager.Instance.arrayPositions[idx].position;
+    }
 
     void SetupInput()
     {
@@ -103,6 +112,8 @@ public class Player : NetworkBehaviour
         Attack.performed += input.OnBrake;
         Attack.Enable();
     }
+    
+
 
     //private void OnPositionChange(Vector3 previousValue, Vector3 newValue)
     //{

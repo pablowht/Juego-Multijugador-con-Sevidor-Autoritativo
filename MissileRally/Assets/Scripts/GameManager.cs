@@ -1,4 +1,5 @@
 using Cinemachine;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
@@ -13,6 +14,8 @@ public class GameManager : MonoBehaviour
     NetworkManager _ntmanager;
     GameObject _prefabPlayer;
     public CinemachineVirtualCamera _virtualCamera;
+    public Vector3 defaultPosition = new Vector3(6.02f, -0.74f, -64f);
+    public List<Transform> arrayPositions = new List<Transform>();
     public static GameManager Instance { get; private set; }
 
     void Awake()
@@ -35,6 +38,7 @@ public class GameManager : MonoBehaviour
 
         _ntmanager.OnServerStarted += OnServerStarted;
         _ntmanager.OnClientConnectedCallback += OnClientConnected;
+        
     }
 
     private void OnServerStarted()
