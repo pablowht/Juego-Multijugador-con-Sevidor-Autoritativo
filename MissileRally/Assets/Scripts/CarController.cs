@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Unity.Services.Qos.V2.Models;
 using Unity.Netcode;
-using UnityEngine.InputSystem;
 using UnityEngine;
-using System.Runtime.ConstrainedExecution;
-
 
 public class CarController : NetworkBehaviour
 {
@@ -59,18 +55,28 @@ public class CarController : NetworkBehaviour
 
     #region Unity Callbacks
     public NetworkVariable<Vector3> CarPosition = new NetworkVariable<Vector3>();
+    public NetworkVariable<Quaternion> CarRotation = new NetworkVariable<Quaternion>();
 
 
     public void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        //if (IsServer)
-        //{
-        //    _nPlayerPosition.OnValueChanged += OnPositionChange;
-        //    _nPlayerRotation.OnValueChanged += OnRotationChange;
-        //}
+        if (IsServer)
+        {
+            CarPosition.OnValueChanged += OnPositionChange;
+            CarRotation.OnValueChanged += OnRotationChange;
+        }
     }
 
+    private void OnRotationChange(Quaternion previousValue, Quaternion newValue)
+    {
+        transform.rotation = newValue;
+    }
+
+    private void OnPositionChange(Vector3 previousValue, Vector3 newValue)
+    {
+        transform.position = newValue;
+    }
 
     public override void OnNetworkSpawn()
     {
@@ -82,6 +88,7 @@ public class CarController : NetworkBehaviour
         if (!IsSpawned) return;
         if (IsServer)
         {
+            print("aceleracion IsServer: " + InputAcceleration);
             InputSteering = Mathf.Clamp(InputSteering, -1, 1);
             InputAcceleration = Mathf.Clamp(InputAcceleration, -1, 1);
             InputBrake = Mathf.Clamp(InputBrake, 0, 1);
@@ -139,6 +146,7 @@ public class CarController : NetworkBehaviour
             TractionControl();
 
             CarPosition.Value = transform.position;
+            CarRotation.Value = transform.rotation;
         }
     }
 

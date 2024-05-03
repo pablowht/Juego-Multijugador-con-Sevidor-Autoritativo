@@ -1,10 +1,6 @@
 using Cinemachine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
-using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -45,15 +41,14 @@ public class Player : NetworkBehaviour
 
     private void Update()
     {
-        if (IsServer)
-        {
-            // Sé que es mejor suscribirse y tal pero es por probar
-            // En el host entra, pero en el cliente no porque no es server...
-            // Pero si se saca de aquí da error porque solo el server tiene derecho a escribir en las network variables
-            // Utilizando un ServerRpc no me ha funcionado muy bien
-            CarPosition.Value = car.transform.position;
-        }
-        
+        //if (IsServer)
+        //{
+        //    // Sé que es mejor suscribirse y tal pero es por probar
+        //    // En el host entra, pero en el cliente no porque no es server...
+        //    // Pero si se saca de aquí da error porque solo el server tiene derecho a escribir en las network variables
+        //    // Utilizando un ServerRpc no me ha funcionado muy bien
+        //    CarPosition.Value = car.transform.position;
+        //}
     }
 
     public override void OnNetworkSpawn()

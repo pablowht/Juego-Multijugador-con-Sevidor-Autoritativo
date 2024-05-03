@@ -23,6 +23,7 @@ public class InputController : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        print("me muevoooo");
         OnMoveServerRpc(context.ReadValue<Vector2>());
     }
 
@@ -38,23 +39,14 @@ public class InputController : MonoBehaviour
     [ServerRpc]
     public void OnMoveServerRpc(Vector2 input)
     {
+        print("onmoveServerrpc");
         car.InputAcceleration = -input.y;
         car.InputSteering = input.x;
+        print("input aceleration: " + car.InputAcceleration);
     }
 
     public void OnBrakeServerRpc(float input)
     {
         car.InputBrake = input;
     }
-
-    //private void OnPositionChange(Vector2 previousValue, Vector2 newValue)
-    //{
-    //    print("el valor posicion ha cambiado");
-    //    _playerTransform.position = newValue;
-    //}
-    //private void OnRotationChange(Quaternion previousValue, Quaternion newValue)
-    //{
-    //    print("el valor rotacion ha cambiado");
-    //    _playerTransform.rotation = newValue;
-    //}
 }
