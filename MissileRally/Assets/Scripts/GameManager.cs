@@ -8,13 +8,12 @@ public class GameManager : MonoBehaviour
     public int numPlayers = 50;
 
     public RaceController currentRace;
+    public CircuitController currentCircuit;
 
     // Cosas nuestras
     NetworkManager _ntmanager;
     GameObject _prefabPlayer;
     public CinemachineVirtualCamera _virtualCamera;
-    public Vector3 defaultPosition = new Vector3(6.02f, -0.74f, -64f);
-    public List<Transform> arrayPositions = new List<Transform>();
     public static GameManager Instance { get; private set; }
 
     void Awake()

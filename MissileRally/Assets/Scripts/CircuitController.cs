@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CircuitController : MonoBehaviour
@@ -7,14 +8,30 @@ public class CircuitController : MonoBehaviour
     private float[] _cumArcLength;
     private float _totalLength;
 
+    public List<Transform> _playersPositions;
+
     public float CircuitLength
     {
         get { return _totalLength; }
     }
 
+    private void getPlayerPositions()
+    {
+        Transform[] childTransforms = GetComponentsInChildren<Transform>();
+
+        foreach (Transform child in childTransforms)
+        {
+            if (child.tag == "PlayerPosition")
+            {
+                _playersPositions.Add(child);
+            }
+        }
+    }
+
     void Start()
     {
         _circuitPath = GetComponentInChildren<LineRenderer>();
+        getPlayerPositions();
 
         int numPoints = _circuitPath.positionCount;
         _pathPos = new Vector3[numPoints];

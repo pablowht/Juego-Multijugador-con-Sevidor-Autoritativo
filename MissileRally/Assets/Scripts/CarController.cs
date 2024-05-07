@@ -22,7 +22,6 @@ public class CarController : NetworkBehaviour
     public float InputSteering { get; set; }
     public float InputBrake { get; set; }
 
-    private Player _player;
 
     private Rigidbody _rigidbody;
     private float _steerHelper = 0.8f;
@@ -88,7 +87,6 @@ public class CarController : NetworkBehaviour
         if (!IsSpawned) return;
         if (IsServer)
         {
-            print("aceleracion IsServer: " + InputAcceleration);
             InputSteering = Mathf.Clamp(InputSteering, -1, 1);
             InputAcceleration = Mathf.Clamp(InputAcceleration, -1, 1);
             InputBrake = Mathf.Clamp(InputBrake, 0, 1);
@@ -145,10 +143,20 @@ public class CarController : NetworkBehaviour
             AddDownForce();
             TractionControl();
 
+            print("Valor Transform IsServer: " + transform.position);
+            print("Valor NetworkVariable IsServer: " + CarPosition.Value);
             CarPosition.Value = transform.position;
             CarRotation.Value = transform.rotation;
         }
+        if (IsClient)
+        {
+            print("Valor Transform IsClient: " + transform.position);
+            print("Valor NetworkVariable IsClient: " + CarPosition.Value);
+            transform.position = CarPosition.Value;
+            transform.rotation = CarRotation.Value;
+        }
     }
+
 
     #endregion
 
