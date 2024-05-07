@@ -23,10 +23,6 @@ public class Player : NetworkBehaviour
 
     public NetworkVariable<Vector3> CarPosition = new NetworkVariable<Vector3>();
 
-    //private NetworkVariable<Vector3> _nPlayerPosition = NetworkVariable<Vector3>()
-    //private readonly NetworkVariable<Vector3> _nPlayerPosition = new(writePerm: NetworkVariableWritePermission.Owner);
-    //private readonly NetworkVariable<Quaternion> _nPlayerRotation = new(writePerm: NetworkVariableWritePermission.Owner);
-    //private Transform _playerTransform;
     CinemachineVirtualCamera _vCamera;
 
     public override string ToString()
@@ -50,6 +46,11 @@ public class Player : NetworkBehaviour
         //    CarPosition.Value = car.transform.position;
         //}
     }
+    private void FixedUpdate()
+    {
+        
+    }
+
 
     public override void OnNetworkSpawn()
     {
@@ -89,7 +90,11 @@ public class Player : NetworkBehaviour
 
     void SetupPosition()
     {
+        print("Coche " + OwnerClientId.ToString());
         car.transform.position = GameManager.Instance.currentCircuit._playersPositions[(int)OwnerClientId].position;
+        print("Posicion Coche" + car.transform.position);
+        print("Posicion Debería " + GameManager.Instance.currentCircuit._playersPositions[(int)OwnerClientId].position);
+        print("Existe? " + GameManager.Instance.currentCircuit._playersPositions[(int)OwnerClientId]);
     }
 
     void SetupInput()

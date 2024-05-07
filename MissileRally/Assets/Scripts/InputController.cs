@@ -1,16 +1,14 @@
 using System;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Windows;
 
 public class InputController : MonoBehaviour
 {
     private CarController car;
-    //private readonly NetworkVariable<Vector3> _nPlayerPosition = new(writePerm: NetworkVariableWritePermission.Owner);
-    //private readonly NetworkVariable<Quaternion> _nPlayerRotation = new(writePerm: NetworkVariableWritePermission.Owner);
-    //private Transform _playerTransform;
-    //private NetworkVariable<Quaternion> _nPlayerRotation = new NetworkVariable<Quaternion>();
-    //private NetworkVariable<Vector2> _nPlayerPosition = new NetworkVariable<Vector2>();
+
     private void Start()
     {
         car = GetComponent<Player>().car.GetComponent<CarController>();
