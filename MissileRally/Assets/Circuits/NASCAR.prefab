@@ -589,7 +589,7 @@ GameObject:
   - component: {fileID: 83981736098803552}
   m_Layer: 0
   m_Name: pos2
-  m_TagString: Untagged
+  m_TagString: RaceStartingPos
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -725,7 +725,7 @@ GameObject:
   - component: {fileID: 83981736157733067}
   m_Layer: 0
   m_Name: pos6
-  m_TagString: Untagged
+  m_TagString: RaceStartingPos
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -756,7 +756,7 @@ GameObject:
   - component: {fileID: 83981736282370925}
   m_Layer: 0
   m_Name: pos3
-  m_TagString: Untagged
+  m_TagString: RaceStartingPos
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -787,7 +787,7 @@ GameObject:
   - component: {fileID: 83981736362083665}
   m_Layer: 0
   m_Name: pos4
-  m_TagString: Untagged
+  m_TagString: RaceStartingPos
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1274,7 +1274,7 @@ GameObject:
   - component: {fileID: 83981736793486725}
   m_Layer: 0
   m_Name: pos1
-  m_TagString: Untagged
+  m_TagString: RaceStartingPos
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1410,7 +1410,7 @@ GameObject:
   - component: {fileID: 83981736989014111}
   m_Layer: 0
   m_Name: pos5
-  m_TagString: Untagged
+  m_TagString: RaceStartingPos
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1910,7 +1910,7 @@ Transform:
   - {fileID: 83981736049474630}
   - {fileID: 2757367774646813502}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!120 &112487141836553763
 LineRenderer:

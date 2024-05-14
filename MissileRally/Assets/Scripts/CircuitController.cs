@@ -15,22 +15,10 @@ public class CircuitController : MonoBehaviour
         get { return _totalLength; }
     }
 
-    private void getPlayerPositions()
-    {
-        Transform[] childTransforms = GetComponentsInChildren<Transform>();
-
-        foreach (Transform child in childTransforms)
-        {
-            if (child.tag == "PlayerPosition")
-            {
-                _playersPositions.Add(child);
-            }
-        }
-    }
-
     void Start()
     {
         _circuitPath = GetComponentInChildren<LineRenderer>();
+
         getPlayerPositions();
 
         int numPoints = _circuitPath.positionCount;
@@ -110,5 +98,18 @@ public class CircuitController : MonoBehaviour
         distOut = minDist;
 
         return minArcL;
+    }
+
+    private void getPlayerPositions()
+    {
+        Transform[] childTransforms = GetComponentsInChildren<Transform>();
+
+        foreach (Transform child in childTransforms)
+        {
+            if (child.tag == "RaceStartingPos")
+            {
+                _playersPositions.Add(child);
+            }
+        }
     }
 }

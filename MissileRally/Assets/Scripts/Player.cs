@@ -12,18 +12,13 @@ public class Player : NetworkBehaviour
 
     // Race Info
     public GameObject car;
-    public TextMeshProUGUI namePlayer;
+    private CarController carController;
+
     public int CurrentPosition { get; set; }
     public int CurrentLap { get; set; }
 
-    private InputAction Move = new InputAction();
-    private InputAction Brake = new InputAction();
-    private InputAction Attack = new InputAction();
-
-
-    public NetworkVariable<Vector3> CarPosition = new NetworkVariable<Vector3>();
-
-    CinemachineVirtualCamera _vCamera;
+    // Player Objects
+    private CinemachineVirtualCamera _vPlayerCamera;
 
     public override string ToString()
     {
@@ -32,25 +27,15 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
-
+        carController = car.GetComponent<CarController>();
+        if (IsOwner)
+        {
+            GetComponent<PlayerInput>().enabled = true;
+        }
     }
 
-    private void Update()
-    {
-        //if (IsServer)
-        //{
-        //    // Sé que es mejor suscribirse y tal pero es por probar
-        //    // En el host entra, pero en el cliente no porque no es server...
-        //    // Pero si se saca de aquí da error porque solo el server tiene derecho a escribir en las network variables
-        //    // Utilizando un ServerRpc no me ha funcionado muy bien
-        //    CarPosition.Value = car.transform.position;
-        //}
-    }
-    private void FixedUpdate()
-    {
-        
-    }
 
+    #region Network
 
     public override void OnNetworkSpawn()
     {
@@ -61,18 +46,20 @@ public class Player : NetworkBehaviour
     {
         if (IsOwner)
         {
+            ID = (int)OwnerClientId;
+
             GameManager.Instance.currentRace.AddPlayer(this);
 
             SetupCamera();
 
-            namePlayer.SetText(OwnerClientId.ToString());
+            //namePlayer.SetText(OwnerClientId.ToString());
 
-            SetupInput();
-            SetupPosition();
+            //SetupInput();
+            //SetupPosition();
 
             //_nPlayerPosition.OnValueChanged += OnPositionChange;
             //_nPlayerRotation.OnValueChanged += OnRotationChange;
-            
+
 
             //_playerTransform = transform;
             //_nPlayerPosition.OnValueChanged += OnPositionChange;
@@ -82,60 +69,54 @@ public class Player : NetworkBehaviour
 
     void SetupCamera()
     {
-        _vCamera = GameManager.Instance._virtualCamera;
+        _vPlayerCamera = GameManager.Instance._virtualCamera;
 
-        _vCamera.Follow = car.GetComponent<Transform>();
-        _vCamera.LookAt = car.GetComponent<Transform>();
+        _vPlayerCamera.Follow = car.GetComponent<Transform>();
+        _vPlayerCamera.LookAt = car.GetComponent<Transform>();
     }
 
+    GameObject carPosition;
     void SetupPosition()
     {
-        print("Coche " + OwnerClientId.ToString());
-        car.transform.position = GameManager.Instance.currentCircuit._playersPositions[(int)OwnerClientId].position;
-        print("Posicion Coche" + car.transform.position);
-        print("Posicion Debería " + GameManager.Instance.currentCircuit._playersPositions[(int)OwnerClientId].position);
-        print("Existe? " + GameManager.Instance.currentCircuit._playersPositions[(int)OwnerClientId]);
+        car.transform.position = GameManager.Instance.currentCircuit._playersPositions[ID].position;
     }
 
-    void SetupInput()
+
+    #endregion
+
+    #region Input
+
+    public void OnMove(InputAction.CallbackContext context)
     {
-        GetComponent<PlayerInput>().enabled = true;
-
-        InputController input = GetComponent<InputController>();
-
-        Move.performed += input.OnMove;
-        Move.Enable();
-
-        Brake.performed += input.OnBrake;
-        Brake.Enable();
-
-        Attack.performed += input.OnBrake;
-        Attack.Enable();
+        OnMoveServerRpc(context.ReadValue<Vector2>());
     }
-    
 
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+        OnAttackServerRpc();
+    }
 
-    //private void OnPositionChange(Vector3 previousValue, Vector3 newValue)
-    //{
-    //    if (IsOwner)
-    //    {
-    //        _nPlayerPosition.Value = _playerTransform.position;
-    //    }
-    //    else
-    //    {
-    //        _playerTransform.position = newValue;
-    //    }
-        
-    //}  
-    //private void OnRotationChange(Quaternion previousValue, Quaternion newValue)
-    //{
-    //    if (IsOwner)
-    //    {
-    //        _nPlayerRotation.Value = _playerTransform.rotation;
-    //    }
-    //    else
-    //    {
-    //        _playerTransform.rotation = newValue;
-    //    }
-    //}
+    public void OnBrake(InputAction.CallbackContext context)
+    {
+        OnBrakeServerRpc(context.ReadValue<float>());
+    }
+
+    // Server RPCs
+    [ServerRpc]
+    public void OnMoveServerRpc(Vector2 input)
+    {
+        carController.InputAcceleration = input.y;
+        carController.InputSteering = input.x;
+    }
+    [ServerRpc]
+    public void OnAttackServerRpc()
+    {
+        print("DISPARANDO...");
+    }
+    [ServerRpc]
+    public void OnBrakeServerRpc(float input)
+    {
+        carController.InputBrake = input;
+    }
+    #endregion
 }

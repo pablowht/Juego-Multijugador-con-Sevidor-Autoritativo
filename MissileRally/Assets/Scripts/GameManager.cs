@@ -1,19 +1,21 @@
 using Cinemachine;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public int numPlayers = 50;
+    public int connectedPlayers = 0;
 
     public RaceController currentRace;
     public CircuitController currentCircuit;
 
-    // Cosas nuestras
-    NetworkManager _ntmanager;
-    GameObject _prefabPlayer;
     public CinemachineVirtualCamera _virtualCamera;
+
+    public GameObject _prefabPlayer;
+
+    public NetworkManager _ntwManager;
+
     public static GameManager Instance { get; private set; }
 
     void Awake()
@@ -30,15 +32,16 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        _ntmanager = NetworkManager.Singleton;
+        _ntwManager = NetworkManager.Singleton;
 
-        _prefabPlayer = _ntmanager.NetworkConfig.Prefabs.Prefabs[0].Prefab;
+        _prefabPlayer = _ntwManager.NetworkConfig.Prefabs.Prefabs[0].Prefab;
 
-        _ntmanager.OnServerStarted += OnServerStarted;
-        _ntmanager.OnClientConnectedCallback += OnClientConnected;
-        
+        _ntwManager.OnServerStarted += OnServerStarted;
+        _ntwManager.OnClientConnectedCallback += OnClientConnected;
+
     }
 
+    #region Network Spawn
     private void OnServerStarted()
     {
         print("El servidor está listo");
@@ -48,14 +51,13 @@ public class GameManager : MonoBehaviour
     {
         if (NetworkManager.Singleton.IsServer)
         {
-            var player = Instantiate(_prefabPlayer);
+            Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
+            var player = Instantiate(_prefabPlayer, playerStartingPosition);
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
+            
+            connectedPlayers++;
         }
     }
+    #endregion
 
-    public void OnDestroy()
-    {
-        _ntmanager.OnServerStarted -= OnServerStarted;
-        _ntmanager.OnClientConnectedCallback -= OnClientConnected;
-    }
 }

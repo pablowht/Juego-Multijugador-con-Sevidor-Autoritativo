@@ -304,7 +304,7 @@ GameObject:
   - component: {fileID: 3442916357500450156}
   m_Layer: 0
   m_Name: pos5
-  m_TagString: PlayerPosition
+  m_TagString: RaceStartingPos
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -335,7 +335,7 @@ GameObject:
   - component: {fileID: 3442916357591445920}
   m_Layer: 0
   m_Name: pos3
-  m_TagString: PlayerPosition
+  m_TagString: RaceStartingPos
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2096,7 +2096,7 @@ GameObject:
   - component: {fileID: 3442916358354656981}
   m_Layer: 0
   m_Name: pos4
-  m_TagString: PlayerPosition
+  m_TagString: RaceStartingPos
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2127,7 +2127,7 @@ GameObject:
   - component: {fileID: 3442916358371043030}
   m_Layer: 0
   m_Name: pos6
-  m_TagString: PlayerPosition
+  m_TagString: RaceStartingPos
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2858,7 +2858,7 @@ GameObject:
   - component: {fileID: 3442916359160300736}
   m_Layer: 0
   m_Name: pos1
-  m_TagString: PlayerPosition
+  m_TagString: RaceStartingPos
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2926,7 +2926,7 @@ GameObject:
   - component: {fileID: 3442916359251740197}
   m_Layer: 0
   m_Name: pos2
-  m_TagString: PlayerPosition
+  m_TagString: RaceStartingPos
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

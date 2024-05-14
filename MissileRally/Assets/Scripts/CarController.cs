@@ -22,6 +22,7 @@ public class CarController : NetworkBehaviour
     public float InputSteering { get; set; }
     public float InputBrake { get; set; }
 
+    //private PlayerInfo m_PlayerInfo;
 
     private Rigidbody _rigidbody;
     private float _steerHelper = 0.8f;
@@ -45,46 +46,24 @@ public class CarController : NetworkBehaviour
 
     public event OnSpeedChangeDelegate OnSpeedChangeEvent;
 
-    //
-    //private NetworkVariable<float> _nPlayerRotation = new NetworkVariable<float>();
-    //private NetworkVariable<float> _nPlayerPosition = new NetworkVariable<float>();
-
-
     #endregion Variables
 
     #region Unity Callbacks
-    public NetworkVariable<Vector3> CarPosition = new NetworkVariable<Vector3>();
-    public NetworkVariable<Quaternion> CarRotation = new NetworkVariable<Quaternion>();
-
 
     public void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        if (IsServer)
-        {
-            CarPosition.OnValueChanged += OnPositionChange;
-            CarRotation.OnValueChanged += OnRotationChange;
-        }
     }
 
-    private void OnRotationChange(Quaternion previousValue, Quaternion newValue)
+    public void Update()
     {
-        transform.rotation = newValue;
-    }
-
-    private void OnPositionChange(Vector3 previousValue, Vector3 newValue)
-    {
-        transform.position = newValue;
-    }
-
-    public override void OnNetworkSpawn()
-    {
-        //_player = GetComponent<Player>();
+        Speed = _rigidbody.velocity.magnitude;
     }
 
     public void FixedUpdate()
     {
         if (!IsSpawned) return;
+
         if (IsServer)
         {
             InputSteering = Mathf.Clamp(InputSteering, -1, 1);
@@ -142,21 +121,8 @@ public class CarController : NetworkBehaviour
             SpeedLimiter();
             AddDownForce();
             TractionControl();
-
-            print("Valor Transform IsServer: " + transform.position);
-            print("Valor NetworkVariable IsServer: " + CarPosition.Value);
-            CarPosition.Value = transform.position;
-            CarRotation.Value = transform.rotation;
-        }
-        if (IsClient)
-        {
-            print("Valor Transform IsClient: " + transform.position);
-            print("Valor NetworkVariable IsClient: " + CarPosition.Value);
-            transform.position = CarPosition.Value;
-            transform.rotation = CarRotation.Value;
         }
     }
-
 
     #endregion
 
@@ -186,7 +152,7 @@ public class CarController : NetworkBehaviour
         }
     }
 
-    // this is used to add more grip in relation to speed
+// this is used to add more grip in relation to speed
     private void AddDownForce()
     {
         foreach (var axleInfo in axleInfos)
@@ -203,8 +169,8 @@ public class CarController : NetworkBehaviour
             _rigidbody.velocity = topSpeed * _rigidbody.velocity.normalized;
     }
 
-    // finds the corresponding visual wheel
-    // correctly applies the transform
+// finds the corresponding visual wheel
+// correctly applies the transform
     public void ApplyLocalPositionToVisuals(WheelCollider col)
     {
         if (col.transform.childCount == 0)
@@ -235,7 +201,7 @@ public class CarController : NetworkBehaviour
             }
         }
 
-        // this if is needed to avoid gimbal lock problems that will make the car suddenly shift direction
+// this if is needed to avoid gimbal lock problems that will make the car suddenly shift direction
         if (Mathf.Abs(CurrentRotation - transform.eulerAngles.y) < 10f)
         {
             var turnAdjust = (transform.eulerAngles.y - CurrentRotation) * _steerHelper;
@@ -247,18 +213,4 @@ public class CarController : NetworkBehaviour
     }
 
     #endregion
-
-
-    //private void OnPositionChange(float previousValue, float newValue)
-    //{
-    //    print("el valor posicion ha cambiado");
-    //    //_playerTransform.position = newValue;
-    //    InputAcceleration = Mathf.Clamp(newValue, -1, 1);
-    //}
-    //private void OnRotationChange(float previousValue, float newValue)
-    //{
-    //    print("el valor rotacion ha cambiado");
-    //    //_playerTransform.rotation = newValue;
-    //    InputSteering = Mathf.Clamp(newValue, -1, 1);
-    //}
 }

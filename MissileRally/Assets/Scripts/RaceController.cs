@@ -33,10 +33,6 @@ public class RaceController : MonoBehaviour
     {
         _players.Add(player);
     }
-    public void RemovePlayer(Player player)
-    {
-        _players.Remove(player);
-    }
 
     private class PlayerInfoComparer : Comparer<Player>
     {
@@ -73,7 +69,7 @@ public class RaceController : MonoBehaviour
             myRaceOrder += player.Name + " ";
         }
 
-        //Debug.Log("Race order: " + myRaceOrder);
+        Debug.Log("Race order: " + myRaceOrder);
     }
 
     float ComputeCarArcLength(int id)
