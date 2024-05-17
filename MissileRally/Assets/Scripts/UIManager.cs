@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -30,33 +31,33 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        _ui_Lobby = GameObject.FindGameObjectWithTag("UI_Lobby");
-        foreach (Transform child in _ui_Lobby.transform)
-        {
-            if (child.tag == "RaceCode") _raceCodeInput = child.GetComponent<TMP_InputField>();
-        }
+        //_ui_Lobby = GameObject.FindGameObjectWithTag("UI_Lobby");
+        //foreach (Transform child in _ui_Lobby.transform)
+        //{
+        //    if (child.tag == "RaceCode") _raceCodeInput = child.GetComponent<TMP_InputField>();
+        //}
 
-        _ui_GameInfo = GameObject.FindGameObjectWithTag("UI_GameInfo");
-        foreach (Transform child in _ui_GameInfo.transform)
-        {
-            if (child.tag == "RaceCode") _raceCodeUI = child.GetComponent<TextMeshProUGUI>();
-            if (child.tag == "UserData") _userData = child.GetComponent<TextMeshProUGUI>();
-        }
+        //_ui_GameInfo = GameObject.FindGameObjectWithTag("UI_GameInfo");
+        //foreach (Transform child in _ui_GameInfo.transform)
+        //{
+        //    if (child.tag == "RaceCode") _raceCodeUI = child.GetComponent<TextMeshProUGUI>();
+        //    if (child.tag == "UserData") _userData = child.GetComponent<TextMeshProUGUI>();
+        //}
 
-        _ui_Lobby.SetActive(true);
-        _ui_GameInfo.SetActive(false);
+        //_ui_Lobby.SetActive(true);
+        //_ui_GameInfo.SetActive(false);
     }
 
     void OnGUI()
     {
-        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
-        {
-            LobbyControlUI();
-        }
-        else
-        {
-            StatusLabels();
-        }
+        //if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
+        //{
+        //    LobbyControlUI();
+        //}
+        //else
+        //{
+        //    StatusLabels();
+        //}
     }
 
     private void LobbyControlUI()
@@ -88,4 +89,20 @@ public class UIManager : MonoBehaviour
         print(_raceCodeInput.text);
         RelayManager.Instance.StartClient(_raceCodeInput.text);
     }
+
+    #region CarSelection
+    [SerializeField] private GameObject[] cars;
+    //[SerializeField] private Button _buttonNextCar;
+    //[SerializeField] private Button _buttonPrevCar;
+
+    private int indexCar = 0;
+
+    public void ChangeCarButton(int avanceNumber)
+    {
+        cars[indexCar].SetActive(false);
+        if (avanceNumber == -1) indexCar = (indexCar + (avanceNumber) + cars.Length) % cars.Length;
+        else indexCar = (indexCar + (avanceNumber)) % cars.Length;
+        cars[indexCar].SetActive(true);
+    }
+    #endregion
 }
