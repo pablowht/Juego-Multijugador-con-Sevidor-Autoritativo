@@ -81,19 +81,48 @@ public class UIManager : MonoBehaviour
     public void StartHostButton()
     {
         RelayManager.Instance.StartHost();
-        //_raceCodeUI.SetText(RelayManager.Instance.joinCode);
     }
 
     public void StartClientButton()
     {
-        print(_raceCodeInput.text);
         RelayManager.Instance.StartClient(_raceCodeInput.text);
     }
 
+    #region Lobby
+    [Header("Lobby UI")]
+    [SerializeField] private GameObject _fondoLobby;
+
+    [Header("Lobby - Player")]
+    [SerializeField] private TextMeshProUGUI _playerNameUI;
+    [SerializeField] private TMP_InputField _playerNameInput;
+
+    [Header("Lobby - Network UI")]
+    [SerializeField] private GameObject _networkUI;
+
+    [Header("Lobby - Car")]
+    [SerializeField] private GameObject _carSelectionUI;
+
+    public void SetPlayerName()
+    {
+        GameManager.Instance.actualPlayer.playerName = _playerNameInput.text;
+        _playerNameUI.text = _playerNameInput.text;
+        _playerNameInput.gameObject.SetActive(false);
+        _fondoLobby.SetActive(false);
+        _carSelectionUI.SetActive(true);
+    }
+
+    public void ReadyButton()
+    {
+        _carSelectionUI.SetActive(false);
+        _fondoLobby.SetActive(true);
+        _networkUI.SetActive(true);
+    }
+
+    #endregion
+
     #region CarSelection
+    [Header("List of Cars")]
     [SerializeField] private GameObject[] cars;
-    //[SerializeField] private Button _buttonNextCar;
-    //[SerializeField] private Button _buttonPrevCar;
 
     private int indexCar = 0;
 

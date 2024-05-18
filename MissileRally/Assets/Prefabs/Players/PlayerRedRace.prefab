@@ -85,7 +85,7 @@ GameObject:
   - component: {fileID: 5469808785263229369}
   - component: {fileID: 6996583528395858978}
   m_Layer: 0
-  m_Name: Player
+  m_Name: PlayerRedRace
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

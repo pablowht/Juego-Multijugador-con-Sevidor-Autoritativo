@@ -10,11 +10,13 @@ public class GameManager : MonoBehaviour
     public RaceController currentRace;
     public CircuitController currentCircuit;
 
-    public CinemachineVirtualCamera _virtualCamera;
+    public CinemachineVirtualCamera virtualCamera;
 
-    public GameObject _prefabPlayer;
+    public GameObject prefabPlayer;
 
-    public NetworkManager _ntwManager;
+    public NetworkManager networkManager;
+
+    public PlayerInfo actualPlayer;
 
     public static GameManager Instance { get; private set; }
 
@@ -32,12 +34,13 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        _ntwManager = NetworkManager.Singleton;
+        actualPlayer = new PlayerInfo();
+        //ntwManager = NetworkManager.Singleton;
 
-        _prefabPlayer = _ntwManager.NetworkConfig.Prefabs.Prefabs[0].Prefab;
+        //prefabPlayer = ntwManager.NetworkConfig.Prefabs.Prefabs[0].Prefab;
 
-        _ntwManager.OnServerStarted += OnServerStarted;
-        _ntwManager.OnClientConnectedCallback += OnClientConnected;
+        //ntwManager.OnServerStarted += OnServerStarted;
+        //ntwManager.OnClientConnectedCallback += OnClientConnected;
 
     }
 
@@ -52,7 +55,7 @@ public class GameManager : MonoBehaviour
         if (NetworkManager.Singleton.IsServer)
         {
             Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
-            var player = Instantiate(_prefabPlayer, playerStartingPosition);
+            var player = Instantiate(prefabPlayer, playerStartingPosition);
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
             
             connectedPlayers++;

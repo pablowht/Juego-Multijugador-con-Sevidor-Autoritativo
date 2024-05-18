@@ -69,7 +69,7 @@ public class Player : NetworkBehaviour
 
     void SetupCamera()
     {
-        _vPlayerCamera = GameManager.Instance._virtualCamera;
+        _vPlayerCamera = GameManager.Instance.virtualCamera;
 
         _vPlayerCamera.Follow = car.GetComponent<Transform>();
         _vPlayerCamera.LookAt = car.GetComponent<Transform>();
