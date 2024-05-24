@@ -6,5 +6,5 @@ public class PlayerInfo
 {
     public string playerName;
     public int playerId;
-    public GameObject playerCar;
+    public int playerCar;
 }

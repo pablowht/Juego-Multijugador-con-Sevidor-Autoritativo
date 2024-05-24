@@ -6,6 +6,7 @@ using Unity.Services.Core;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class RelayManager : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class RelayManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -27,7 +29,7 @@ public class RelayManager : MonoBehaviour
         }
     }
 
-    async public void StartHost()
+    async public Task StartHost()
     {
         await UnityServices.InitializeAsync();
         if(!AuthenticationService.Instance.IsSignedIn)
@@ -38,7 +40,7 @@ public class RelayManager : MonoBehaviour
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(allocation, "dtls"));
         joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
         NetworkManager.Singleton.StartHost();
-        UIManager.Instance._raceCodeUI.SetText(joinCode);
+        //UIManager.Instance._raceCodeUI.SetText(joinCode);
     }
 
     async public void StartClient(string joinCodeInput)

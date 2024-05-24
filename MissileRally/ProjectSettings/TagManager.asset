@@ -12,6 +12,8 @@ TagManager:
   - RaceCode
   - UserData
   - RaceStartingPos
+  - CircuitManager
+  - VirtualCamera
   layers:
   - Default
   - TransparentFX

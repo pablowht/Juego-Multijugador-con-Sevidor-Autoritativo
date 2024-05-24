@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -29,8 +30,8 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
+    //private void Start()
+    //{
         //_ui_Lobby = GameObject.FindGameObjectWithTag("UI_Lobby");
         //foreach (Transform child in _ui_Lobby.transform)
         //{
@@ -46,10 +47,10 @@ public class UIManager : MonoBehaviour
 
         //_ui_Lobby.SetActive(true);
         //_ui_GameInfo.SetActive(false);
-    }
+    //}
 
-    void OnGUI()
-    {
+    //void OnGUI()
+    //{
         //if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
         //{
         //    LobbyControlUI();
@@ -58,19 +59,19 @@ public class UIManager : MonoBehaviour
         //{
         //    StatusLabels();
         //}
-    }
+    //}
 
-    private void LobbyControlUI()
-    {
-        _ui_Lobby.SetActive(true);
-        //RelayManager.Instance.joinCode = _raceCodeInput.ToString();
-        //_raceCodeUI.SetText(RelayManager.Instance.joinCode);
-    }
+    //private void LobbyControlUI()
+    //{
+    //    _ui_Lobby.SetActive(true);
+    //    //RelayManager.Instance.joinCode = _raceCodeInput.ToString();
+    //    //_raceCodeUI.SetText(RelayManager.Instance.joinCode);
+    //}
 
     private void StatusLabels()
     {
-        _ui_Lobby.SetActive(false);
-        _ui_GameInfo.SetActive(true);
+        //_ui_Lobby.SetActive(false);
+        //_ui_GameInfo.SetActive(true);
 
         var mode = NetworkManager.Singleton.IsHost ?
             "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
@@ -78,14 +79,22 @@ public class UIManager : MonoBehaviour
         _userData.SetText(mode + " : PlayerID");
     }
 
+
     public void StartHostButton()
     {
-        RelayManager.Instance.StartHost();
+        StartHostSequence();
+    }
+    private async void StartHostSequence()
+    {
+        SceneManager.LoadSceneAsync("RaceScene");
+        await RelayManager.Instance.StartHost();
+        //GameManager.Instance.ConnectToRace();
+        //_raceCodeUI.SetText(RelayManager.Instance.joinCode);
     }
 
     public void StartClientButton()
     {
-        RelayManager.Instance.StartClient(_raceCodeInput.text);
+        //RelayManager.Instance.StartClient(_raceCodeInput.text);
     }
 
     #region Lobby
@@ -111,8 +120,16 @@ public class UIManager : MonoBehaviour
         _carSelectionUI.SetActive(true);
     }
 
+    public void SetRaceCode()
+    {
+        StartClientButton();
+        SceneManager.LoadSceneAsync("RaceScene");
+        GameManager.Instance.ConnectToRace();
+    }
+
     public void ReadyButton()
     {
+        GameManager.Instance.actualPlayer.playerCar = indexCar;
         _carSelectionUI.SetActive(false);
         _fondoLobby.SetActive(true);
         _networkUI.SetActive(true);

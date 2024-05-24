@@ -566,7 +566,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &382615017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2174,7 +2174,7 @@ GameObject:
   - component: {fileID: 1242963632}
   m_Layer: 0
   m_Name: Virtual Camera
-  m_TagString: Untagged
+  m_TagString: VirtualCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2247,7 +2247,7 @@ GameObject:
   - component: {fileID: 1404277711}
   m_Layer: 0
   m_Name: CircuitManager
-  m_TagString: Untagged
+  m_TagString: CircuitManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2310,7 +2310,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1441936980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2356,7 +2356,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1488284200
 Transform:
   m_ObjectHideFlags: 0
@@ -2465,7 +2465,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 696348ca765a29349a5c26482e1f9499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _raceCodeUI: {fileID: 0}
+  _raceCodeUI: {fileID: 1061750735}
+  _fondoLobby: {fileID: 0}
+  _playerNameUI: {fileID: 0}
+  _playerNameInput: {fileID: 0}
+  _networkUI: {fileID: 0}
+  _carSelectionUI: {fileID: 0}
+  cars: []
 --- !u!4 &1641688410
 Transform:
   m_ObjectHideFlags: 0
@@ -2590,7 +2596,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1792126705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2607,9 +2613,9 @@ MonoBehaviour:
   connectedPlayers: 0
   currentRace: {fileID: 1404277711}
   currentCircuit: {fileID: 1404277709}
-  _virtualCamera: {fileID: 1242963632}
-  _prefabPlayer: {fileID: 0}
-  _ntwManager: {fileID: 0}
+  virtualCamera: {fileID: 0}
+  prefabPlayer: {fileID: 0}
+  networkManager: {fileID: 0}
 --- !u!4 &1792126706
 Transform:
   m_ObjectHideFlags: 0
