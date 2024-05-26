@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
 
     public PlayerInfo actualPlayer;
 
+    public string mapScene;
+
     public static GameManager Instance { get; private set; }
 
     void Awake()
@@ -49,7 +51,7 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         //print(SceneManager.GetActiveScene().name);
-        if ((SceneManager.GetActiveScene().name == "RaceScene") && !cocheEnCarrera)
+        if ((SceneManager.GetActiveScene().name == mapScene) && !cocheEnCarrera)
         {
             print("Hola");
             currentCircuit = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<CircuitController>();
@@ -70,13 +72,14 @@ public class GameManager : MonoBehaviour
 
     private void OnClientConnected(ulong obj)
     {
-        print("Hola Cliente");
         if (NetworkManager.Singleton.IsServer)
         {
-            print("Hola Creando");
             StartCoroutine(WaitTillSceneLoaded());
+            UIManager.Instance._raceCodeUI.SetText(RelayManager.Instance.joinCode);
+
             Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
             var player = Instantiate(prefabPlayer, playerStartingPosition);
+
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
             
             connectedPlayers++;
@@ -85,8 +88,10 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator WaitTillSceneLoaded()
     {
-        yield return new WaitUntil(()=> SceneManager.GetActiveScene().name == "RaceScene");
+        yield return new WaitUntil(()=> SceneManager.GetActiveScene().name == mapScene);
     }
+
+    public NetworkVariable<int> carIndex = new NetworkVariable<int>();
 
     public void ConnectToRace()
     {

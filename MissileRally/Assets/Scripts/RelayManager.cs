@@ -43,7 +43,7 @@ public class RelayManager : MonoBehaviour
         //UIManager.Instance._raceCodeUI.SetText(joinCode);
     }
 
-    async public void StartClient(string joinCodeInput)
+    async public Task StartClient(string joinCodeInput)
     {
         await UnityServices.InitializeAsync();
         if (!AuthenticationService.Instance.IsSignedIn)

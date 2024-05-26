@@ -12,7 +12,6 @@ public class UIManager : MonoBehaviour
     private GameObject _ui_GameInfo;
     //private TMP_InputField _playerNameInput;
     public TextMeshProUGUI _raceCodeUI;
-    private TMP_InputField _raceCodeInput;
     private TextMeshProUGUI _userData;
     private TextMeshProUGUI _playerGameInfo;
 
@@ -80,21 +79,27 @@ public class UIManager : MonoBehaviour
     }
 
 
-    public void StartHostButton()
+    public void StartHostButton(string map)
     {
-        StartHostSequence();
+        GameManager.Instance.mapScene = map;
+        StartHostSequence(map);
     }
-    private async void StartHostSequence()
+    private async void StartHostSequence(string map)
     {
-        SceneManager.LoadSceneAsync("RaceScene");
+        SceneManager.LoadSceneAsync(map);
         await RelayManager.Instance.StartHost();
         //GameManager.Instance.ConnectToRace();
         //_raceCodeUI.SetText(RelayManager.Instance.joinCode);
     }
+    private async void StartClientButton()
+    {
+        await RelayManager.Instance.StartClient(_raceCodeInput.GetComponent<TMP_InputField>().text);
+    }
 
-    public void StartClientButton()
+    public void SetVisibleRaceInput()
     {
         //RelayManager.Instance.StartClient(_raceCodeInput.text);
+        _raceCodeInput.SetActive(true);
     }
 
     #region Lobby
@@ -107,9 +112,13 @@ public class UIManager : MonoBehaviour
 
     [Header("Lobby - Network UI")]
     [SerializeField] private GameObject _networkUI;
+    [SerializeField] private GameObject _raceCodeInput;
 
     [Header("Lobby - Car")]
     [SerializeField] private GameObject _carSelectionUI;
+    
+    [Header("Lobby - Map Selection")]
+    [SerializeField] private GameObject _mapSelectionUI;
 
     public void SetPlayerName()
     {
@@ -122,9 +131,20 @@ public class UIManager : MonoBehaviour
 
     public void SetRaceCode()
     {
-        StartClientButton();
-        SceneManager.LoadSceneAsync("RaceScene");
+        //StartClientButton();
+        //AQUI HAY QUE MIRAR ELEFANTE
+        SceneManager.LoadSceneAsync(GameManager.Instance.mapScene);
         GameManager.Instance.ConnectToRace();
+        StartClientButton();
+
+        //RelayManager.Instance.joinCode = _raceCodeInput.ToString();
+
+    }
+
+    public void CreateRaceButton()
+    {
+        _networkUI.SetActive(false);
+        _mapSelectionUI.SetActive(true);
     }
 
     public void ReadyButton()

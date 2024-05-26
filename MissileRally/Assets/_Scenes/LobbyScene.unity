@@ -251,6 +251,9 @@ MonoBehaviour:
   virtualCamera: {fileID: 0}
   prefabPlayer: {fileID: 0}
   networkManager: {fileID: 709956355}
+  mapScene: 
+  carIndex:
+    m_InternalValue: 0
 --- !u!4 &39098874
 Transform:
   m_ObjectHideFlags: 0
@@ -559,7 +562,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 98240910}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 649977164}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_MethodName: StartHostButton
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: NascarScene
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &98240910
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -913,7 +928,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 215377468}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 649977164}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_MethodName: StartHostButton
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: OwlPlainsScene
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &215377468
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1322,7 +1349,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 581661424}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 649977164}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_MethodName: StartHostButton
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: OasisScene
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &581661424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1728,7 +1767,9 @@ MonoBehaviour:
   _playerNameUI: {fileID: 39367520}
   _playerNameInput: {fileID: 1302648568}
   _networkUI: {fileID: 1079439211}
+  _raceCodeInput: {fileID: 2121813500}
   _carSelectionUI: {fileID: 1938961201}
+  _mapSelectionUI: {fileID: 2126364734}
   cars:
   - {fileID: 1400084528}
   - {fileID: 1392034073}
@@ -1940,7 +1981,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 844794436}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 649977164}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_MethodName: StartHostButton
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: RainyScene
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &844794436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2062,9 +2115,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 649977164}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: StartClientButton
+        m_MethodName: SetVisibleRaceInput
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3387,7 +3440,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 649977164}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: StartHostButton
+        m_MethodName: CreateRaceButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3801,7 +3854,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2121813501
 RectTransform:
   m_ObjectHideFlags: 0
