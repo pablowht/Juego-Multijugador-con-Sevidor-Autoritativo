@@ -251,6 +251,7 @@ MonoBehaviour:
   virtualCamera: {fileID: 0}
   prefabPlayer: {fileID: 0}
   networkManager: {fileID: 709956355}
+  actualPlayer: {fileID: 0}
   mapScene: 
   carIndex:
     m_InternalValue: 0
@@ -1763,6 +1764,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _raceCodeUI: {fileID: 0}
+  _speedometerNeedle: {fileID: 0}
+  _carController: {fileID: 0}
   _fondoLobby: {fileID: 47358621}
   _playerNameUI: {fileID: 39367520}
   _playerNameInput: {fileID: 1302648568}

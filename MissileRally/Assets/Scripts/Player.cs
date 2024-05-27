@@ -29,10 +29,10 @@ public class Player : NetworkBehaviour
     {
         carController = car.GetComponent<CarController>();
         UIManager.Instance._carController = carController;
-        if (IsOwner)
-        {
-            GetComponent<PlayerInput>().enabled = true;
-        }
+        //if (IsOwner)
+        //{
+        //    GetComponent<PlayerInput>().enabled = true;
+        //}
     }
 
 
@@ -54,17 +54,6 @@ public class Player : NetworkBehaviour
             SetupCamera();
 
             //namePlayer.SetText(OwnerClientId.ToString());
-
-            //SetupInput();
-            //SetupPosition();
-
-            //_nPlayerPosition.OnValueChanged += OnPositionChange;
-            //_nPlayerRotation.OnValueChanged += OnRotationChange;
-
-
-            //_playerTransform = transform;
-            //_nPlayerPosition.OnValueChanged += OnPositionChange;
-            //_nPlayerRotation.OnValueChanged += OnRotationChange;
         }
     }
 
@@ -74,12 +63,6 @@ public class Player : NetworkBehaviour
 
         _vPlayerCamera.Follow = car.GetComponent<Transform>();
         _vPlayerCamera.LookAt = car.GetComponent<Transform>();
-    }
-
-    GameObject carPosition;
-    void SetupPosition()
-    {
-        car.transform.position = GameManager.Instance.currentCircuit._playersPositions[ID].position;
     }
 
 

@@ -1,6 +1,7 @@
 using Cinemachine;
 using System;
 using System.Collections;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -22,7 +23,7 @@ public class GameManager : MonoBehaviour
     public PlayerInfo actualPlayerInfo;
     public Player actualPlayer;
 
-    public string mapScene = "LobbyScene";
+    public string mapScene;
 
     public static GameManager Instance { get; private set; }
 
@@ -42,27 +43,30 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         actualPlayerInfo = new PlayerInfo();
+        mapScene = "NascarScene";
 
         networkManager = NetworkManager.Singleton;
         networkManager.OnServerStarted += OnServerStarted;
         networkManager.OnClientConnectedCallback += OnClientConnected;
     }
 
-    private bool cocheEnCarrera = false;
+    //bool cocheEnCarrera = false;
     private void Update()
     {
         //EVENTO para gestionar mejor lo siguiente:
-        if ((SceneManager.GetActiveScene().name == mapScene) && !cocheEnCarrera)
-        {
-            print("Hola");
-            currentCircuit = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<CircuitController>();
-            currentRace = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<RaceController>();
-            virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
-            
+        //if ((SceneManager.GetActiveScene().name == mapScene) && !cocheEnCarrera)
+        //{
+        //    print("Hola");
+        //    currentCircuit = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<CircuitController>();
+        //    currentRace = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<RaceController>();
+        //    virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
 
-            ConnectToRace();
-            cocheEnCarrera = true;
-        }
+
+        //    ConnectToRace();
+        //    cocheEnCarrera = true;
+        //}
+        print("Local: " + mapScene);
+        print("Network: "+ mapSelected.Value);
     }
 
     #region Network
@@ -76,8 +80,11 @@ public class GameManager : MonoBehaviour
         if (NetworkManager.Singleton.IsServer)
         {
             StartCoroutine(WaitTillSceneLoaded());
+            ConnectToRace();
+
             UIManager.Instance._raceCodeUI.SetText(RelayManager.Instance.joinCode);
 
+            //DUDA 2
             Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
             var player = Instantiate(prefabPlayer, playerStartingPosition);
 
@@ -95,12 +102,29 @@ public class GameManager : MonoBehaviour
         yield return new WaitUntil(()=> SceneManager.GetActiveScene().name == mapScene);
     }
 
-    public NetworkVariable<int> carIndex = new NetworkVariable<int>();
+    public NetworkVariable<FixedString32Bytes> mapSelected = new NetworkVariable<FixedString32Bytes>();
+
+    public void SetMapSelected(string map)
+    {
+        if (NetworkManager.Singleton.IsServer)
+        {
+            FixedString32Bytes fixedStringMap = new FixedString32Bytes(map);
+            mapSelected.Value = fixedStringMap;
+        }
+    }
+
 
     public void ConnectToRace()
     {
-        print("DentroMetodo");
+        //DUDA 1
+        print("Variable" + mapScene);
+        print("Scena" + SceneManager.GetActiveScene().name);
+        //mapScene = SceneManager.GetActiveScene().name;
+        currentCircuit = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<CircuitController>();
+        currentRace = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<RaceController>();
+        virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
         prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[actualPlayerInfo.playerCar].Prefab;
+        SetMapSelected(mapScene);
     }
     #endregion
 

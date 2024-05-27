@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -27,6 +28,7 @@ public class UIManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
     }
 
     //private void Start()
@@ -69,8 +71,9 @@ public class UIManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //EVENTO para gestionar lo siguiente:
-        if (GameManager.Instance.mapScene != "LobbyScene") { updateSpeedometer(); }
+        //DUDA 3:
+        if (carRaceOn) { updateSpeedometer(); }
+
     }
 
     #region GameInfo UI
@@ -84,13 +87,21 @@ public class UIManager : MonoBehaviour
 
     private void updateSpeedometer()
     {
-        print("agujereando");
         vehicleSpeed = _carController.Speed;
         needlePosition = startNeedlePosition - endNeedlePosition;
-        float temp = vehicleSpeed / 180;
+        float temp = vehicleSpeed / 60;
         _speedometerNeedle.transform.eulerAngles = new Vector3 (0, 0, (startNeedlePosition - temp * needlePosition));
     }
 
+    private bool carRaceOn = false;
+    public void CarReadyForRace()
+    {
+        carRaceOn = true;
+        if (GameManager.Instance.actualPlayer.IsOwner)
+        {
+            GameManager.Instance.actualPlayer.GetComponent<PlayerInput>().enabled = true;
+        }
+    }
 
     #endregion
 
@@ -115,6 +126,8 @@ public class UIManager : MonoBehaviour
     {
         SceneManager.LoadSceneAsync(map);
         await RelayManager.Instance.StartHost();
+        //GameManager.Instance.SetMapSelected(map);
+
         //GameManager.Instance.ConnectToRace();
         //_raceCodeUI.SetText(RelayManager.Instance.joinCode);
     }
@@ -160,11 +173,14 @@ public class UIManager : MonoBehaviour
 
     public void SetRaceCode()
     {
+        //DUDA 1
+
         //StartClientButton();
-        //AQUI HAY QUE MIRAR ELEFANTE
+        //ELEFANTE
+        //GameManager.Instance.mapScene = GameManager.Instance.mapSelected.Value.ToString();
         SceneManager.LoadSceneAsync(GameManager.Instance.mapScene);
-        GameManager.Instance.ConnectToRace();
         StartClientButton();
+        //GameManager.Instance.ConnectToRace();
 
         //RelayManager.Instance.joinCode = _raceCodeInput.ToString();
 
