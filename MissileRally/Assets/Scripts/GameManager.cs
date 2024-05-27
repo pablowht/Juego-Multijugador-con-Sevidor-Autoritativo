@@ -19,9 +19,10 @@ public class GameManager : MonoBehaviour
 
     public NetworkManager networkManager;
 
-    public PlayerInfo actualPlayer;
+    public PlayerInfo actualPlayerInfo;
+    public Player actualPlayer;
 
-    public string mapScene;
+    public string mapScene = "LobbyScene";
 
     public static GameManager Instance { get; private set; }
 
@@ -40,7 +41,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        actualPlayer = new PlayerInfo();
+        actualPlayerInfo = new PlayerInfo();
 
         networkManager = NetworkManager.Singleton;
         networkManager.OnServerStarted += OnServerStarted;
@@ -50,7 +51,7 @@ public class GameManager : MonoBehaviour
     private bool cocheEnCarrera = false;
     private void Update()
     {
-        //print(SceneManager.GetActiveScene().name);
+        //EVENTO para gestionar mejor lo siguiente:
         if ((SceneManager.GetActiveScene().name == mapScene) && !cocheEnCarrera)
         {
             print("Hola");
@@ -80,6 +81,9 @@ public class GameManager : MonoBehaviour
             Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
             var player = Instantiate(prefabPlayer, playerStartingPosition);
 
+            //Quizás lo siguiente hay que cambiarlo, pero de momento lo dejaría
+            actualPlayer = player.GetComponent<Player>();
+
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
             
             connectedPlayers++;
@@ -96,7 +100,7 @@ public class GameManager : MonoBehaviour
     public void ConnectToRace()
     {
         print("DentroMetodo");
-        prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[actualPlayer.playerCar].Prefab;
+        prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[actualPlayerInfo.playerCar].Prefab;
     }
     #endregion
 

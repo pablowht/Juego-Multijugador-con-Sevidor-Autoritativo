@@ -31,33 +31,33 @@ public class UIManager : MonoBehaviour
 
     //private void Start()
     //{
-        //_ui_Lobby = GameObject.FindGameObjectWithTag("UI_Lobby");
-        //foreach (Transform child in _ui_Lobby.transform)
-        //{
-        //    if (child.tag == "RaceCode") _raceCodeInput = child.GetComponent<TMP_InputField>();
-        //}
+    //_ui_Lobby = GameObject.FindGameObjectWithTag("UI_Lobby");
+    //foreach (Transform child in _ui_Lobby.transform)
+    //{
+    //    if (child.tag == "RaceCode") _raceCodeInput = child.GetComponent<TMP_InputField>();
+    //}
 
-        //_ui_GameInfo = GameObject.FindGameObjectWithTag("UI_GameInfo");
-        //foreach (Transform child in _ui_GameInfo.transform)
-        //{
-        //    if (child.tag == "RaceCode") _raceCodeUI = child.GetComponent<TextMeshProUGUI>();
-        //    if (child.tag == "UserData") _userData = child.GetComponent<TextMeshProUGUI>();
-        //}
+    //_ui_GameInfo = GameObject.FindGameObjectWithTag("UI_GameInfo");
+    //foreach (Transform child in _ui_GameInfo.transform)
+    //{
+    //    if (child.tag == "RaceCode") _raceCodeUI = child.GetComponent<TextMeshProUGUI>();
+    //    if (child.tag == "UserData") _userData = child.GetComponent<TextMeshProUGUI>();
+    //}
 
-        //_ui_Lobby.SetActive(true);
-        //_ui_GameInfo.SetActive(false);
+    //_ui_Lobby.SetActive(true);
+    //_ui_GameInfo.SetActive(false);
     //}
 
     //void OnGUI()
     //{
-        //if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
-        //{
-        //    LobbyControlUI();
-        //}
-        //else
-        //{
-        //    StatusLabels();
-        //}
+    //if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
+    //{
+    //    LobbyControlUI();
+    //}
+    //else
+    //{
+    //    StatusLabels();
+    //}
     //}
 
     //private void LobbyControlUI()
@@ -67,6 +67,34 @@ public class UIManager : MonoBehaviour
     //    //_raceCodeUI.SetText(RelayManager.Instance.joinCode);
     //}
 
+    private void FixedUpdate()
+    {
+        //EVENTO para gestionar lo siguiente:
+        if (GameManager.Instance.mapScene != "LobbyScene") { updateSpeedometer(); }
+    }
+
+    #region GameInfo UI
+
+    [SerializeField] private GameObject _speedometerNeedle;
+    private float startNeedlePosition = 217.8f;
+    private float endNeedlePosition = -39.4f;
+    private float needlePosition;
+    private float vehicleSpeed;
+    public CarController _carController;
+
+    private void updateSpeedometer()
+    {
+        print("agujereando");
+        vehicleSpeed = _carController.Speed;
+        needlePosition = startNeedlePosition - endNeedlePosition;
+        float temp = vehicleSpeed / 180;
+        _speedometerNeedle.transform.eulerAngles = new Vector3 (0, 0, (startNeedlePosition - temp * needlePosition));
+    }
+
+
+    #endregion
+
+    #region Network Buttons
     private void StatusLabels()
     {
         //_ui_Lobby.SetActive(false);
@@ -77,7 +105,6 @@ public class UIManager : MonoBehaviour
 
         _userData.SetText(mode + " : PlayerID");
     }
-
 
     public void StartHostButton(string map)
     {
@@ -102,6 +129,8 @@ public class UIManager : MonoBehaviour
         _raceCodeInput.SetActive(true);
     }
 
+    #endregion
+
     #region Lobby
     [Header("Lobby UI")]
     [SerializeField] private GameObject _fondoLobby;
@@ -122,7 +151,7 @@ public class UIManager : MonoBehaviour
 
     public void SetPlayerName()
     {
-        GameManager.Instance.actualPlayer.playerName = _playerNameInput.text;
+        GameManager.Instance.actualPlayerInfo.playerName = _playerNameInput.text;
         _playerNameUI.text = _playerNameInput.text;
         _playerNameInput.gameObject.SetActive(false);
         _fondoLobby.SetActive(false);
@@ -149,7 +178,7 @@ public class UIManager : MonoBehaviour
 
     public void ReadyButton()
     {
-        GameManager.Instance.actualPlayer.playerCar = indexCar;
+        GameManager.Instance.actualPlayerInfo.playerCar = indexCar;
         _carSelectionUI.SetActive(false);
         _fondoLobby.SetActive(true);
         _networkUI.SetActive(true);

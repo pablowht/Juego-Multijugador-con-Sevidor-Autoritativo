@@ -30,10 +30,11 @@ public class CarController : NetworkBehaviour
 
     private float _currentSpeed = 0;
 
-    private float Speed
+    //He puesto pública la velocidad pero privada su set para poder utilizarla para la needle
+    public float Speed
     {
         get => _currentSpeed;
-        set
+        private set
         {
             if (Math.Abs(_currentSpeed - value) < float.Epsilon) return;
             _currentSpeed = value;

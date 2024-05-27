@@ -12,7 +12,7 @@ public class Player : NetworkBehaviour
 
     // Race Info
     public GameObject car;
-    private CarController carController;
+    public CarController carController; //Esta variable la he puesto pública para poder cambiar la aguja en la UI pero no se si hay mejores opciones
 
     public int CurrentPosition { get; set; }
     public int CurrentLap { get; set; }
@@ -28,6 +28,7 @@ public class Player : NetworkBehaviour
     private void Start()
     {
         carController = car.GetComponent<CarController>();
+        UIManager.Instance._carController = carController;
         if (IsOwner)
         {
             GetComponent<PlayerInput>().enabled = true;
