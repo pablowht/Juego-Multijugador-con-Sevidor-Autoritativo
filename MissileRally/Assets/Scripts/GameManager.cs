@@ -124,7 +124,7 @@ public class GameManager : MonoBehaviour
         currentRace = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<RaceController>();
         virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
         prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[actualPlayerInfo.playerCar].Prefab;
-        SetMapSelected(mapScene);
+        //SetMapSelected(mapScene);
     }
     #endregion
 
