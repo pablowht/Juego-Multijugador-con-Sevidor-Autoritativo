@@ -54,9 +54,9 @@ public class Player : NetworkBehaviour
 
     void SetupPlayer()
     {
+        SetupColor();
         if (IsOwner)
         {
-            //SetupColor();
 
             ID = (int)OwnerClientId;
 
@@ -70,11 +70,21 @@ public class Player : NetworkBehaviour
 
     public void SetupColor()
     {
-        print("entro");
-        colorCocheIdx = GameManager.Instance.actualPlayerInfo.playerCar;
-        networkColorIdx.Value = colorCocheIdx;
-
-        OnSetColor(0, networkColorIdx.Value);
+        if (IsOwner)
+        {
+            print("entro");
+            colorCocheIdx = GameManager.Instance.actualPlayerInfo.playerCar;
+            networkColorIdx.Value = colorCocheIdx;
+            OnSetColor(0, networkColorIdx.Value);
+        }
+        else
+        {
+            OnSetColor(0, networkColorIdx.Value);
+        }
+        //else
+        //{
+        //    OnSetColor(0, networkColorIdx.Value);
+        //}
     }
 
     void OnSetColor(int previous, int newM)

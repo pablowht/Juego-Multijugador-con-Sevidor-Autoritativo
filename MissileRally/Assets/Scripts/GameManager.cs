@@ -73,12 +73,12 @@ public class GameManager : MonoBehaviour
         print("El servidor está listo");
     }
 
+
     private void OnClientConnected(ulong obj)
     {
         mapaNumeroLocal = mapaNumero.Value;
         StartCoroutine(WaitTillSceneLoaded());
         ConnectToRace();
-        Player pCopia;
         //InstantiatePlayerServerRpc(actualPlayerInfo.playerCar, obj);
 
         if (NetworkManager.Singleton.IsServer)
@@ -87,42 +87,72 @@ public class GameManager : MonoBehaviour
             Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
             var player = Instantiate(prefabPlayer, playerStartingPosition);
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
-            pCopia = player.GetComponent<Player>();
-            //print(prefabPlayer.name);
             connectedPlayers++;
+
+
+            print("a - PLAYER ID: " + player.GetComponent<NetworkObject>().NetworkObjectId);
+            print("d - PLAYER ID: " + obj);
+            //pCopia = player.GetComponent<Player>();
+            //print(prefabPlayer.name);
+            //AssignPlayerClientRpc(player.GetComponent<NetworkObject>().NetworkObjectId, obj);
+            
             //print("ISserverPrefabN: " + prefabPlayer);
             //actualPlayer = player.GetComponent<Player>();
         }
-        //actualPlayer = pCopia;
-    }
-
-    [ServerRpc]
-    private void InstantiatePlayerServerRpc(int pos, ulong obj)
-    {
-        //prefabPrueba = prefabPlayerToInstantiate;
-        print("ServerRPC");
         
-        //print("prefab: " + prefabPlayer.name);
-        //print("argumento: " + prefabPlayerToInstantiate.name);
-        print(pos);
-        prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[pos].Prefab;
-        print("prefab: " + prefabPlayer.name);
-
-        Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
-
-        var player = Instantiate(prefabPlayer, playerStartingPosition);
-        actualPlayer = player.GetComponent<Player>();
-        //mesh renderer
-        player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
-        print(prefabPlayer.name);
-        connectedPlayers++;
-                
-        //prefabPlayer = prefabPlayerToInstantiate;
-        //prefabPrueba = prefabPlayerToInstantiate;
-
-        //actualPlayer = player.GetComponent<Player>();
-
+        //actualPlayer = NetworkManager.Singleton.SpawnManager.SpawnedObjects[obj+1].GetComponent<Player>();
     }
+
+    //Player InstancePlayer(ulong obj)
+    //{
+    //    Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
+    //    var player = Instantiate(prefabPlayer, playerStartingPosition);
+    //    player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
+    //    return player.GetComponent<Player>();
+    //}
+
+
+    [ClientRpc]
+    private void AssignPlayerClientRpc(ulong playerId, ulong clientId)
+    {
+        print("ENTRO A CLIENTRPC: " + NetworkManager.Singleton.LocalClientId);
+        if (NetworkManager.Singleton.LocalClientId == clientId)
+        {
+            print("PLAYER ID: " + playerId);
+            print("CLIENT ID: " + clientId);
+            var playerObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[playerId];
+            actualPlayer = playerObject.GetComponent<Player>();
+            //NotifyServerOfPlayerInstantiationServerRpc(playerId);
+        }
+    }
+
+    //[ServerRpc]
+    //private void InstantiatePlayerServerRpc(int pos, ulong obj)
+    //{
+    //    //prefabPrueba = prefabPlayerToInstantiate;
+    //    print("ServerRPC");
+        
+    //    //print("prefab: " + prefabPlayer.name);
+    //    //print("argumento: " + prefabPlayerToInstantiate.name);
+    //    print(pos);
+    //    prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[pos].Prefab;
+    //    print("prefab: " + prefabPlayer.name);
+
+    //    Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
+
+    //    var player = Instantiate(prefabPlayer, playerStartingPosition);
+    //    actualPlayer = player.GetComponent<Player>();
+    //    //mesh renderer
+    //    player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
+    //    print(prefabPlayer.name);
+    //    connectedPlayers++;
+                
+    //    //prefabPlayer = prefabPlayerToInstantiate;
+    //    //prefabPrueba = prefabPlayerToInstantiate;
+
+    //    //actualPlayer = player.GetComponent<Player>();
+
+    //}
 
 
 
