@@ -1,4 +1,5 @@
 using Cinemachine;
+using System;
 using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
@@ -24,6 +25,9 @@ public class GameManager : MonoBehaviour
     public string mapScene;
     public string joinCodeNumber;
 
+    public NetworkVariable<int> carsReadyToRace_ntw = new NetworkVariable<int>(0);
+    public int carsReadyToRace = 0;
+
     public static GameManager Instance { get; private set; }
 
     void Awake()
@@ -46,6 +50,56 @@ public class GameManager : MonoBehaviour
         networkManager = NetworkManager.Singleton;
         networkManager.OnServerStarted += OnServerStarted;
         networkManager.OnClientConnectedCallback += OnClientConnected;
+        networkManager.OnClientDisconnectCallback += OnClientDisconnected;
+
+        carsReadyToRace_ntw.OnValueChanged += OnCarsReadyChanged;
+    }
+
+    private void OnDestroy()
+    {
+        networkManager.OnServerStarted -= OnServerStarted;
+        networkManager.OnClientConnectedCallback -= OnClientConnected;
+        networkManager.OnClientDisconnectCallback -= OnClientDisconnected;
+
+        carsReadyToRace_ntw.OnValueChanged -= OnCarsReadyChanged;
+    }
+
+    public void OnCarsReadyChanged(int previousValue, int newValue)
+    {
+        carsReadyToRace = newValue;
+        Debug.Log($"Cars Ready Changed: {previousValue} -> {newValue}");
+        UIManager.Instance._numberCarReadyUI.SetText(newValue.ToString());
+        if (carsReadyToRace >= 2)
+        {
+            BeginRace();
+        }
+    }
+
+    private void BeginRace()
+    {
+        EnablePlayerInputs();
+        UIManager.Instance.DisableUIToStartRace();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void IncrementCarReadyServerRpc()
+    {
+        Debug.Log($"Before Increment: {carsReadyToRace_ntw.Value}");
+        carsReadyToRace_ntw.Value += 1;
+        Debug.Log($"After Increment: {carsReadyToRace_ntw.Value}");
+    }
+
+    private void EnablePlayerInputs()
+    {
+        
+        foreach (var networkObject in NetworkManager.Singleton.SpawnManager.SpawnedObjectsList)
+        {
+            // Verificamos si el objeto tiene el componente Player
+            if (networkObject.TryGetComponent<Player>(out var player))
+            {
+                player.EnablePlayerInput();
+            }
+        }
     }
 
     //bool cocheEnCarrera = false;
@@ -73,98 +127,38 @@ public class GameManager : MonoBehaviour
         print("El servidor está listo");
     }
 
+    private void OnClientDisconnected(ulong obj)
+    {
+        if (NetworkManager.Singleton.IsServer)
+        {
+            connectedPlayers--;
+        }
+    }
 
     private void OnClientConnected(ulong obj)
     {
         mapaNumeroLocal = mapaNumero.Value;
         StartCoroutine(WaitTillSceneLoaded());
         ConnectToRace();
-        //InstantiatePlayerServerRpc(actualPlayerInfo.playerCar, obj);
 
         if (NetworkManager.Singleton.IsServer)
         {
-            //print("ISserverPrefab: " + prefabPlayer);
             Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
             var player = Instantiate(prefabPlayer, playerStartingPosition);
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
-            connectedPlayers++;
-
-
-            print("a - PLAYER ID: " + player.GetComponent<NetworkObject>().NetworkObjectId);
-            print("d - PLAYER ID: " + obj);
-            //pCopia = player.GetComponent<Player>();
-            //print(prefabPlayer.name);
-            //AssignPlayerClientRpc(player.GetComponent<NetworkObject>().NetworkObjectId, obj);
-            
-            //print("ISserverPrefabN: " + prefabPlayer);
             //actualPlayer = player.GetComponent<Player>();
-        }
-        
-        //actualPlayer = NetworkManager.Singleton.SpawnManager.SpawnedObjects[obj+1].GetComponent<Player>();
-    }
-
-    //Player InstancePlayer(ulong obj)
-    //{
-    //    Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
-    //    var player = Instantiate(prefabPlayer, playerStartingPosition);
-    //    player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
-    //    return player.GetComponent<Player>();
-    //}
-
-
-    [ClientRpc]
-    private void AssignPlayerClientRpc(ulong playerId, ulong clientId)
-    {
-        print("ENTRO A CLIENTRPC: " + NetworkManager.Singleton.LocalClientId);
-        if (NetworkManager.Singleton.LocalClientId == clientId)
-        {
-            print("PLAYER ID: " + playerId);
-            print("CLIENT ID: " + clientId);
-            var playerObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[playerId];
-            actualPlayer = playerObject.GetComponent<Player>();
-            //NotifyServerOfPlayerInstantiationServerRpc(playerId);
+            connectedPlayers++;
         }
     }
-
-    //[ServerRpc]
-    //private void InstantiatePlayerServerRpc(int pos, ulong obj)
-    //{
-    //    //prefabPrueba = prefabPlayerToInstantiate;
-    //    print("ServerRPC");
-        
-    //    //print("prefab: " + prefabPlayer.name);
-    //    //print("argumento: " + prefabPlayerToInstantiate.name);
-    //    print(pos);
-    //    prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[pos].Prefab;
-    //    print("prefab: " + prefabPlayer.name);
-
-    //    Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
-
-    //    var player = Instantiate(prefabPlayer, playerStartingPosition);
-    //    actualPlayer = player.GetComponent<Player>();
-    //    //mesh renderer
-    //    player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
-    //    print(prefabPlayer.name);
-    //    connectedPlayers++;
-                
-    //    //prefabPlayer = prefabPlayerToInstantiate;
-    //    //prefabPrueba = prefabPlayerToInstantiate;
-
-    //    //actualPlayer = player.GetComponent<Player>();
-
-    //}
-
-
-
     private IEnumerator WaitTillSceneLoaded()
     {
-        yield return new WaitUntil(()=> SceneManager.GetActiveScene().name == mapasNombre[mapaNumeroLocal]);
+        yield return new WaitUntil(() => SceneManager.GetActiveScene().isLoaded);
     }
 
     //public NetworkVariable<FixedString32Bytes> mapSelected = new NetworkVariable<FixedString32Bytes>();
     public NetworkVariable<int> mapaNumero = new NetworkVariable<int>();
     public int mapaNumeroLocal;
-    public string[] mapasNombre = { "NascarScene", "RainyScene", "OasisScene", "OwlPlainsScene"};
+    public string[] mapasNombre = { "NascarScene", "RainyScene", "OasisScene", "OwlPlainsScene" };
     public Material[] coloresMaterial;
 
     public void SetMapSelected(int mapNumber)
@@ -183,7 +177,7 @@ public class GameManager : MonoBehaviour
         //if (NetworkManager.Singleton.IsServer)
         //{
         //    //mapaNumero.Value = mapNumber;
-            
+
         //    //mapScene = mapasNombre[mapNumber];
         //}
 
@@ -197,8 +191,8 @@ public class GameManager : MonoBehaviour
         virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
         UIManager.Instance._raceCodeUI.SetText(joinCodeNumber);
         prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[0].Prefab;
-        
-        
+
+
         //SetMapSelected(mapScene);
     }
     #endregion

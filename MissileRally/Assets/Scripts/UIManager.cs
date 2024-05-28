@@ -66,14 +66,15 @@ public class UIManager : MonoBehaviour
     //    //_raceCodeUI.SetText(RelayManager.Instance.joinCode);
     //}
 
-    private void FixedUpdate()
-    {
-        //DUDA 3:
-        if (carRaceOn) { updateSpeedometer(); }
-    }
+    //private void FixedUpdate()
+    //{
+    //    //Crear un script aparte para el speedometer que active el gameobject al empezar la carrera y por tanto empiece su fixedupdate
+    //    //if (carRaceOn) { updateSpeedometer(); }
+    //}
 
     #region GameInfo UI
 
+    [SerializeField] public GameObject _speedometer;
     [SerializeField] private GameObject _speedometerNeedle;
     private float startNeedlePosition = 217.8f;
     private float endNeedlePosition = -39.4f;
@@ -81,7 +82,7 @@ public class UIManager : MonoBehaviour
     private float vehicleSpeed;
     public CarController _carController;
 
-    private void updateSpeedometer()
+    public void updateSpeedometer()
     {
         vehicleSpeed = _carController.Speed;
         needlePosition = startNeedlePosition - endNeedlePosition;
@@ -89,14 +90,23 @@ public class UIManager : MonoBehaviour
         _speedometerNeedle.transform.eulerAngles = new Vector3 (0, 0, (startNeedlePosition - temp * needlePosition));
     }
 
-    private bool carRaceOn = false;
+    //private bool carRaceOn = false;
+    [Header("Car Ready")]
+    [SerializeField] private GameObject botonCarReady;
+    [SerializeField] private GameObject _carReadyUI;
+    [SerializeField] public TextMeshProUGUI _numberCarReadyUI;
     public void CarReadyForRace()
     {
-        carRaceOn = true;
-        if (GameManager.Instance.actualPlayer.IsOwner)
-        {
-            GameManager.Instance.actualPlayer.GetComponent<PlayerInput>().enabled = true;
-        }
+        botonCarReady.GetComponent<Button>().interactable = false;
+        _carReadyUI.SetActive(true);
+        GameManager.Instance.IncrementCarReadyServerRpc();
+    }
+
+    public void DisableUIToStartRace()
+    {
+        _carReadyUI.SetActive(false);
+        botonCarReady.SetActive(false);
+        _speedometer.SetActive(true);
     }
 
     #endregion

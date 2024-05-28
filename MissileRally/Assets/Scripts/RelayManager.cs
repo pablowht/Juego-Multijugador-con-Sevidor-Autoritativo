@@ -12,7 +12,7 @@ public class RelayManager : MonoBehaviour
 {
     const int maxConnections = 50;
 
-    public string joinCode = "Código de la carrera...";
+    public string joinCode = "Código...";
 
     public static RelayManager Instance { get; private set; }
 
@@ -53,6 +53,8 @@ public class RelayManager : MonoBehaviour
 
         var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode: joinCodeInput);
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
+        print(joinCode);
+        print(joinAllocation);
         GameManager.Instance.joinCodeNumber = joinCode;
         NetworkManager.Singleton.StartClient();
     }

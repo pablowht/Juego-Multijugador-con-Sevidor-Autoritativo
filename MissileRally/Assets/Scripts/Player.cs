@@ -68,7 +68,7 @@ public class Player : NetworkBehaviour
         }
     }
 
-    public void SetupColor()
+    void SetupColor()
     {
         if (IsOwner)
         {
@@ -81,10 +81,14 @@ public class Player : NetworkBehaviour
         {
             OnSetColor(0, networkColorIdx.Value);
         }
-        //else
-        //{
-        //    OnSetColor(0, networkColorIdx.Value);
-        //}
+    }
+
+    public void EnablePlayerInput()
+    {
+        if (IsOwner)
+        {
+            GetComponent<PlayerInput>().enabled = true;
+        }
     }
 
     void OnSetColor(int previous, int newM)
