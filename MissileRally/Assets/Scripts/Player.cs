@@ -1,11 +1,12 @@
 using Cinemachine;
-using TMPro;
+using System;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : NetworkBehaviour
 {
+     
     // Player Info
     public string Name { get; set; }
     public int ID { get; set; }
@@ -20,6 +21,13 @@ public class Player : NetworkBehaviour
     // Player Objects
     private CinemachineVirtualCamera _vPlayerCamera;
 
+    // información color
+    //Material colorCoche;
+    NetworkVariable<int> networkColorIdx = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    //esta variable SOLO puede ser escrita por el propio owner, el servidor NO puede escribirla, solo leerla
+    //para actualizar la información al resto de clientes
+    int colorCocheIdx;
+
     public override string ToString()
     {
         return Name;
@@ -33,6 +41,7 @@ public class Player : NetworkBehaviour
         //{
         //    GetComponent<PlayerInput>().enabled = true;
         //}
+        networkColorIdx.OnValueChanged += OnSetColor;
     }
 
 
@@ -47,6 +56,8 @@ public class Player : NetworkBehaviour
     {
         if (IsOwner)
         {
+            //SetupColor();
+
             ID = (int)OwnerClientId;
 
             GameManager.Instance.currentRace.AddPlayer(this);
@@ -55,6 +66,27 @@ public class Player : NetworkBehaviour
 
             //namePlayer.SetText(OwnerClientId.ToString());
         }
+    }
+
+    public void SetupColor()
+    {
+        print("entro");
+        colorCocheIdx = GameManager.Instance.actualPlayerInfo.playerCar;
+        networkColorIdx.Value = colorCocheIdx;
+
+        OnSetColor(0, networkColorIdx.Value);
+    }
+
+    void OnSetColor(int previous, int newM)
+    {
+        //Material body = car.transform.GetChild(0).GetComponent<MeshRenderer>().materials[1];
+        MeshRenderer body = car.transform.GetChild(0).GetComponent<MeshRenderer>();
+        Material[] mat = body.materials;
+        print("material: " + newM);
+        mat[1] = GameManager.Instance.coloresMaterial[newM];
+        body.materials = mat;
+        /*Se iguala el material otra vez, porque por defecto body.materials devuelve una copia del valor,
+         por lo que hay que reflejar los cambios*/
     }
 
     void SetupCamera()

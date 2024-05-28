@@ -1,11 +1,8 @@
 using Cinemachine;
-using System;
 using System.Collections;
-using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Timeline;
 
 public class GameManager : MonoBehaviour
 {
@@ -76,42 +73,50 @@ public class GameManager : MonoBehaviour
         print("El servidor está listo");
     }
 
-    public GameObject prefabPrueba;
-
     private void OnClientConnected(ulong obj)
     {
         mapaNumeroLocal = mapaNumero.Value;
         StartCoroutine(WaitTillSceneLoaded());
         ConnectToRace();
-
-        prefabPrueba = prefabPlayer;
-        //print(prefabPrueba);
-
-        InstantiatePlayerServerRpc(actualPlayerInfo.playerCar);
+        Player pCopia;
+        //InstantiatePlayerServerRpc(actualPlayerInfo.playerCar, obj);
 
         if (NetworkManager.Singleton.IsServer)
         {
+            //print("ISserverPrefab: " + prefabPlayer);
             Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
-
             var player = Instantiate(prefabPlayer, playerStartingPosition);
-            actualPlayer = player.GetComponent<Player>();
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
-            print(prefabPlayer.name);
+            pCopia = player.GetComponent<Player>();
+            //print(prefabPlayer.name);
             connectedPlayers++;
+            //print("ISserverPrefabN: " + prefabPlayer);
+            //actualPlayer = player.GetComponent<Player>();
         }
+        //actualPlayer = pCopia;
     }
 
     [ServerRpc]
-    private void InstantiatePlayerServerRpc(int pos)
+    private void InstantiatePlayerServerRpc(int pos, ulong obj)
     {
         //prefabPrueba = prefabPlayerToInstantiate;
         print("ServerRPC");
-        print("prefab: " + prefabPlayer.name);
+        
+        //print("prefab: " + prefabPlayer.name);
         //print("argumento: " + prefabPlayerToInstantiate.name);
         print(pos);
         prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[pos].Prefab;
         print("prefab: " + prefabPlayer.name);
 
+        Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
+
+        var player = Instantiate(prefabPlayer, playerStartingPosition);
+        actualPlayer = player.GetComponent<Player>();
+        //mesh renderer
+        player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
+        print(prefabPlayer.name);
+        connectedPlayers++;
+                
         //prefabPlayer = prefabPlayerToInstantiate;
         //prefabPrueba = prefabPlayerToInstantiate;
 
@@ -130,6 +135,7 @@ public class GameManager : MonoBehaviour
     public NetworkVariable<int> mapaNumero = new NetworkVariable<int>();
     public int mapaNumeroLocal;
     public string[] mapasNombre = { "NascarScene", "RainyScene", "OasisScene", "OwlPlainsScene"};
+    public Material[] coloresMaterial;
 
     public void SetMapSelected(int mapNumber)
     {
@@ -152,6 +158,7 @@ public class GameManager : MonoBehaviour
         //}
 
         //DUDA 1
+
         print("Variable: " + mapaNumeroLocal);
         print("Escena: " + SceneManager.GetActiveScene().name);
         //mapScene = SceneManager.GetActiveScene().name;
@@ -159,7 +166,9 @@ public class GameManager : MonoBehaviour
         currentRace = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<RaceController>();
         virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
         UIManager.Instance._raceCodeUI.SetText(joinCodeNumber);
-        prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[actualPlayerInfo.playerCar].Prefab;
+        prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[0].Prefab;
+        
+        
         //SetMapSelected(mapScene);
     }
     #endregion
