@@ -39,8 +39,8 @@ public class RelayManager : MonoBehaviour
         Allocation allocation = await RelayService.Instance.CreateAllocationAsync(maxConnections);
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(allocation, "dtls"));
         joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+        GameManager.Instance.joinCodeNumber = joinCode;
         NetworkManager.Singleton.StartHost();
-        //UIManager.Instance._raceCodeUI.SetText(joinCode);
     }
 
     async public Task StartClient(string joinCodeInput)
@@ -53,6 +53,7 @@ public class RelayManager : MonoBehaviour
 
         var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode: joinCodeInput);
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
+        GameManager.Instance.joinCodeNumber = joinCode;
         NetworkManager.Singleton.StartClient();
     }
 }

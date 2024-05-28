@@ -5,6 +5,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Timeline;
 
 public class GameManager : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour
     public Player actualPlayer;
 
     public string mapScene;
+    public string joinCodeNumber;
 
     public static GameManager Instance { get; private set; }
 
@@ -43,7 +45,6 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         actualPlayerInfo = new PlayerInfo();
-        mapScene = "NascarScene";
 
         networkManager = NetworkManager.Singleton;
         networkManager.OnServerStarted += OnServerStarted;
@@ -66,7 +67,7 @@ public class GameManager : MonoBehaviour
         //    cocheEnCarrera = true;
         //}
         print("Local: " + mapScene);
-        print("Network: "+ mapSelected.Value);
+        //print("Network: "+ mapSelected.Value);
     }
 
     #region Network
@@ -75,54 +76,89 @@ public class GameManager : MonoBehaviour
         print("El servidor está listo");
     }
 
+    public GameObject prefabPrueba;
+
     private void OnClientConnected(ulong obj)
     {
+        mapaNumeroLocal = mapaNumero.Value;
+        StartCoroutine(WaitTillSceneLoaded());
+        ConnectToRace();
+
+        prefabPrueba = prefabPlayer;
+        //print(prefabPrueba);
+
+        InstantiatePlayerServerRpc(actualPlayerInfo.playerCar);
+
         if (NetworkManager.Singleton.IsServer)
         {
-            StartCoroutine(WaitTillSceneLoaded());
-            ConnectToRace();
-
-            UIManager.Instance._raceCodeUI.SetText(RelayManager.Instance.joinCode);
-
-            //DUDA 2
             Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
+
             var player = Instantiate(prefabPlayer, playerStartingPosition);
-
-            //Quizás lo siguiente hay que cambiarlo, pero de momento lo dejaría
             actualPlayer = player.GetComponent<Player>();
-
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
-            
+            print(prefabPlayer.name);
             connectedPlayers++;
         }
     }
 
-    private IEnumerator WaitTillSceneLoaded()
+    [ServerRpc]
+    private void InstantiatePlayerServerRpc(int pos)
     {
-        yield return new WaitUntil(()=> SceneManager.GetActiveScene().name == mapScene);
+        //prefabPrueba = prefabPlayerToInstantiate;
+        print("ServerRPC");
+        print("prefab: " + prefabPlayer.name);
+        //print("argumento: " + prefabPlayerToInstantiate.name);
+        print(pos);
+        prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[pos].Prefab;
+        print("prefab: " + prefabPlayer.name);
+
+        //prefabPlayer = prefabPlayerToInstantiate;
+        //prefabPrueba = prefabPlayerToInstantiate;
+
+        //actualPlayer = player.GetComponent<Player>();
+
     }
 
-    public NetworkVariable<FixedString32Bytes> mapSelected = new NetworkVariable<FixedString32Bytes>();
 
-    public void SetMapSelected(string map)
+
+    private IEnumerator WaitTillSceneLoaded()
+    {
+        yield return new WaitUntil(()=> SceneManager.GetActiveScene().name == mapasNombre[mapaNumeroLocal]);
+    }
+
+    //public NetworkVariable<FixedString32Bytes> mapSelected = new NetworkVariable<FixedString32Bytes>();
+    public NetworkVariable<int> mapaNumero = new NetworkVariable<int>();
+    public int mapaNumeroLocal;
+    public string[] mapasNombre = { "NascarScene", "RainyScene", "OasisScene", "OwlPlainsScene"};
+
+    public void SetMapSelected(int mapNumber)
     {
         if (NetworkManager.Singleton.IsServer)
         {
-            FixedString32Bytes fixedStringMap = new FixedString32Bytes(map);
-            mapSelected.Value = fixedStringMap;
+            mapaNumero.Value = mapNumber;
+            mapaNumeroLocal = mapaNumero.Value;
+            //mapScene = mapasNombre[mapNumber];
         }
     }
 
 
     public void ConnectToRace()
     {
+        //if (NetworkManager.Singleton.IsServer)
+        //{
+        //    //mapaNumero.Value = mapNumber;
+            
+        //    //mapScene = mapasNombre[mapNumber];
+        //}
+
         //DUDA 1
-        print("Variable" + mapScene);
-        print("Scena" + SceneManager.GetActiveScene().name);
+        print("Variable: " + mapaNumeroLocal);
+        print("Escena: " + SceneManager.GetActiveScene().name);
         //mapScene = SceneManager.GetActiveScene().name;
         currentCircuit = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<CircuitController>();
         currentRace = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<RaceController>();
         virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
+        UIManager.Instance._raceCodeUI.SetText(joinCodeNumber);
         prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[actualPlayerInfo.playerCar].Prefab;
         //SetMapSelected(mapScene);
     }

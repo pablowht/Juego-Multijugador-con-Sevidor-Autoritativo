@@ -253,8 +253,13 @@ MonoBehaviour:
   networkManager: {fileID: 709956355}
   actualPlayer: {fileID: 0}
   mapScene: 
-  carIndex:
+  mapaNumero:
     m_InternalValue: 0
+  mapasNombre:
+  - NascarScene
+  - RainyScene
+  - OasisScene
+  - OwlPlainsScene
 --- !u!4 &39098874
 Transform:
   m_ObjectHideFlags: 0
@@ -567,13 +572,13 @@ MonoBehaviour:
       - m_Target: {fileID: 649977164}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: StartHostButton
-        m_Mode: 5
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: NascarScene
+          m_StringArgument: 0
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &98240910
@@ -933,13 +938,13 @@ MonoBehaviour:
       - m_Target: {fileID: 649977164}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: StartHostButton
-        m_Mode: 5
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 3
           m_FloatArgument: 0
-          m_StringArgument: OwlPlainsScene
+          m_StringArgument: 3
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &215377468
@@ -1354,13 +1359,13 @@ MonoBehaviour:
       - m_Target: {fileID: 649977164}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: StartHostButton
-        m_Mode: 5
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 2
           m_FloatArgument: 0
-          m_StringArgument: OasisScene
+          m_StringArgument: 2
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &581661424
@@ -1988,13 +1993,13 @@ MonoBehaviour:
       - m_Target: {fileID: 649977164}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: StartHostButton
-        m_Mode: 5
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
-          m_StringArgument: RainyScene
+          m_StringArgument: 1
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &844794436
@@ -4057,9 +4062,9 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 98240908}
+  - {fileID: 844794434}
   - {fileID: 581661422}
   - {fileID: 215377466}
-  - {fileID: 844794434}
   m_Father: {fileID: 582921919}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

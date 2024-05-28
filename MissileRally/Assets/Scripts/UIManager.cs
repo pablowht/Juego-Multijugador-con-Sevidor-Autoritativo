@@ -9,12 +9,9 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    private GameObject _ui_Lobby;
-    private GameObject _ui_GameInfo;
     //private TMP_InputField _playerNameInput;
     public TextMeshProUGUI _raceCodeUI;
     private TextMeshProUGUI _userData;
-    private TextMeshProUGUI _playerGameInfo;
 
     public static UIManager Instance { get; private set; }
 
@@ -73,7 +70,6 @@ public class UIManager : MonoBehaviour
     {
         //DUDA 3:
         if (carRaceOn) { updateSpeedometer(); }
-
     }
 
     #region GameInfo UI
@@ -117,16 +113,16 @@ public class UIManager : MonoBehaviour
         _userData.SetText(mode + " : PlayerID");
     }
 
-    public void StartHostButton(string map)
+    public void StartHostButton(int mapNumber)
     {
-        GameManager.Instance.mapScene = map;
-        StartHostSequence(map);
+        GameManager.Instance.mapScene = GameManager.Instance.mapasNombre[mapNumber];
+        StartHostSequence(mapNumber, GameManager.Instance.mapScene);
     }
-    private async void StartHostSequence(string map)
+    private async void StartHostSequence(int mapNumber, string mapSceneName)
     {
-        SceneManager.LoadSceneAsync(map);
+        SceneManager.LoadSceneAsync(mapSceneName);
         await RelayManager.Instance.StartHost();
-        //GameManager.Instance.SetMapSelected(map);
+        GameManager.Instance.SetMapSelected(mapNumber);
 
         //GameManager.Instance.ConnectToRace();
         //_raceCodeUI.SetText(RelayManager.Instance.joinCode);
@@ -134,6 +130,20 @@ public class UIManager : MonoBehaviour
     private async void StartClientButton()
     {
         await RelayManager.Instance.StartClient(_raceCodeInput.GetComponent<TMP_InputField>().text);
+    }
+
+    public void SetRaceCode()
+    {
+        //DUDA 1
+
+        //StartClientButton();
+        //ELEFANTE
+        //GameManager.Instance.mapScene = GameManager.Instance.mapSelected.Value.ToString();
+        //SceneManager.LoadSceneAsync(GameManager.Instance.mapasNombre[GameManager.Instance.mapaNumero.Value]);
+        //GameManager.Instance.ConnectToRace();
+        StartClientButton();
+        //RelayManager.Instance.joinCode = _raceCodeInput.ToString();
+
     }
 
     public void SetVisibleRaceInput()
@@ -171,20 +181,7 @@ public class UIManager : MonoBehaviour
         _carSelectionUI.SetActive(true);
     }
 
-    public void SetRaceCode()
-    {
-        //DUDA 1
-
-        //StartClientButton();
-        //ELEFANTE
-        //GameManager.Instance.mapScene = GameManager.Instance.mapSelected.Value.ToString();
-        SceneManager.LoadSceneAsync(GameManager.Instance.mapScene);
-        StartClientButton();
-        //GameManager.Instance.ConnectToRace();
-
-        //RelayManager.Instance.joinCode = _raceCodeInput.ToString();
-
-    }
+   
 
     public void CreateRaceButton()
     {
