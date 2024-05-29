@@ -42,6 +42,10 @@ public class Player : NetworkBehaviour
         //    GetComponent<PlayerInput>().enabled = true;
         //}
         networkColorIdx.OnValueChanged += OnSetColor;
+        GameManager.Instance.actualPlayer = this;
+        print("actualPlayerCopia: " + GameManager.Instance.actualPlayer.name);
+        //carsReadyToRace_ntw.OnValueChanged += OnCarsReadyChanged;
+
     }
 
 
@@ -110,6 +114,40 @@ public class Player : NetworkBehaviour
         _vPlayerCamera.Follow = car.GetComponent<Transform>();
         _vPlayerCamera.LookAt = car.GetComponent<Transform>();
     }
+
+    //public NetworkVariable<int> carsReadyToRace_ntw = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    //// Start is called before the first frame update
+
+    //public void OnCarsReadyChanged(int previousValue, int newValue)
+    //{
+    //    GameManager.Instance.carsReadyToRace = newValue;
+    //    Debug.Log($"Cars Ready Changed: {previousValue} -> {newValue}");
+    //    print("cars ready: " + GameManager.Instance.carsReadyToRace);
+    //    print("cars nt: " + carsReadyToRace_ntw.Value);
+    //    UIManager.Instance._numberCarReadyUI.SetText(newValue.ToString());
+    //    if (GameManager.Instance.carsReadyToRace >= 2)
+    //    {
+    //        GameManager.Instance.BeginRace();
+    //    }
+    //}
+
+    //public void IncrementCarReady()
+    //{
+    //    if (IsOwner)
+    //    {
+    //        print("soy owner");
+    //        //carsReadyToRace_ntw.Value = GameManager.Instance.carsReadyToRace;
+    //        Debug.Log($"Before Increment: {carsReadyToRace_ntw.Value}");
+    //        carsReadyToRace_ntw.Value += 1;
+    //        Debug.Log($"After Increment: {carsReadyToRace_ntw.Value}");
+    //        OnCarsReadyChanged(0, carsReadyToRace_ntw.Value);
+    //    }
+    //    else
+    //    {
+    //        print("else");
+    //        OnCarsReadyChanged(0, carsReadyToRace_ntw.Value);
+    //    }
+    //}
 
 
     #endregion

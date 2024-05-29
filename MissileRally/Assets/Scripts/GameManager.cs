@@ -25,7 +25,9 @@ public class GameManager : MonoBehaviour
     public string mapScene;
     public string joinCodeNumber;
 
-    public NetworkVariable<int> carsReadyToRace_ntw = new NetworkVariable<int>(0);
+    public NetworkGameManager ntGameInfo;
+
+    //public NetworkVariable<int> carsReadyToRace_ntw = new NetworkVariable<int>(0);
     public int carsReadyToRace = 0;
 
     public static GameManager Instance { get; private set; }
@@ -52,7 +54,7 @@ public class GameManager : MonoBehaviour
         networkManager.OnClientConnectedCallback += OnClientConnected;
         networkManager.OnClientDisconnectCallback += OnClientDisconnected;
 
-        carsReadyToRace_ntw.OnValueChanged += OnCarsReadyChanged;
+        ntGameInfo = transform.GetChild(0).GetComponent<NetworkGameManager>();
     }
 
     private void OnDestroy()
@@ -61,42 +63,53 @@ public class GameManager : MonoBehaviour
         networkManager.OnClientConnectedCallback -= OnClientConnected;
         networkManager.OnClientDisconnectCallback -= OnClientDisconnected;
 
-        carsReadyToRace_ntw.OnValueChanged -= OnCarsReadyChanged;
     }
 
-    public void OnCarsReadyChanged(int previousValue, int newValue)
-    {
-        carsReadyToRace = newValue;
-        Debug.Log($"Cars Ready Changed: {previousValue} -> {newValue}");
-        UIManager.Instance._numberCarReadyUI.SetText(newValue.ToString());
-        if (carsReadyToRace >= 2)
-        {
-            BeginRace();
-        }
-    }
+    //public void OnCarsReadyChanged(int previousValue, int newValue)
+    //{
+    //    carsReadyToRace = newValue;
+    //    Debug.Log($"Cars Ready Changed: {previousValue} -> {newValue}");
+    //    UIManager.Instance._numberCarReadyUI.SetText(newValue.ToString());
+    //    if (carsReadyToRace >= 2)
+    //    {
+    //        BeginRace();
+    //    }
+    //}
 
-    private void BeginRace()
+    public void BeginRace()
     {
         EnablePlayerInputs();
         UIManager.Instance.DisableUIToStartRace();
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void IncrementCarReadyServerRpc()
-    {
-        Debug.Log($"Before Increment: {carsReadyToRace_ntw.Value}");
-        carsReadyToRace_ntw.Value += 1;
-        Debug.Log($"After Increment: {carsReadyToRace_ntw.Value}");
-    }
+    //[ServerRpc(RequireOwnership = false)]
+    //public void IncrementCarReadyServerRpc()
+    //{
+    //    Debug.Log($"Before Increment: {carsReadyToRace_ntw.Value}");
+    //    carsReadyToRace_ntw.Value += 1;
+    //    Debug.Log($"After Increment: {carsReadyToRace_ntw.Value}");
+    //}
+    //public void IncrementCarReady()
+    //{
+    //    Debug.Log($"Before Increment: {carsReadyToRace_ntw.Value}");
+    //    carsReadyToRace_ntw.Value += 1;
+    //    Debug.Log($"After Increment: {carsReadyToRace_ntw.Value}");
+    //}
 
     private void EnablePlayerInputs()
     {
+        print("numero readys: " + carsReadyToRace);
+
+        print(NetworkManager.Singleton.SpawnManager.SpawnedObjectsList.Count);
         
         foreach (var networkObject in NetworkManager.Singleton.SpawnManager.SpawnedObjectsList)
         {
+            print("fuera " + networkObject.name);
+
             // Verificamos si el objeto tiene el componente Player
             if (networkObject.TryGetComponent<Player>(out var player))
             {
+                print("dentro" + player.name);
                 player.EnablePlayerInput();
             }
         }
@@ -118,6 +131,7 @@ public class GameManager : MonoBehaviour
         //    cocheEnCarrera = true;
         //}
         print("Local: " + mapScene);
+        print("coches readys: " + carsReadyToRace);
         //print("Network: "+ mapSelected.Value);
     }
 
@@ -132,6 +146,7 @@ public class GameManager : MonoBehaviour
         if (NetworkManager.Singleton.IsServer)
         {
             connectedPlayers--;
+            //PENDIENTE - ELEFANTE: disminuir variable de personajes listos
         }
     }
 

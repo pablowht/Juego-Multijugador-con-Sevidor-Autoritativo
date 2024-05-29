@@ -225,6 +225,7 @@ GameObject:
   m_Component:
   - component: {fileID: 39098874}
   - component: {fileID: 39098873}
+  - component: {fileID: 39098875}
   m_Layer: 0
   m_Name: '@GameManager'
   m_TagString: Untagged
@@ -254,6 +255,10 @@ MonoBehaviour:
   actualPlayer: {fileID: 0}
   mapScene: 
   joinCodeNumber: 
+  ntGameInfo: {fileID: 0}
+  carsReadyToRace_ntw:
+    m_InternalValue: 0
+  carsReadyToRace: 0
   mapaNumero:
     m_InternalValue: 0
   mapaNumeroLocal: 0
@@ -280,10 +285,23 @@ Transform:
   m_LocalPosition: {x: 928.7759, y: 739.344, z: 280.38306}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 495192222}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &39098875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 39098872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3253e9f3c46c284479d517823bb7664f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &39367518
 GameObject:
   m_ObjectHideFlags: 0
@@ -1272,6 +1290,72 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding: {x: -8, y: -5, z: -8, w: -5}
   m_Softness: {x: 0, y: 0}
+--- !u!1 &495192221
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 495192222}
+  - component: {fileID: 495192223}
+  - component: {fileID: 495192224}
+  m_Layer: 0
+  m_Name: NetworkGame
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &495192222
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 495192221}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 39098874}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &495192223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 495192221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1014911577
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+--- !u!114 &495192224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 495192221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3253e9f3c46c284479d517823bb7664f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &544946640
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1804,8 +1888,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _raceCodeUI: {fileID: 0}
+  _speedometer: {fileID: 0}
   _speedometerNeedle: {fileID: 0}
   _carController: {fileID: 0}
+  botonCarReady: {fileID: 0}
+  _carReadyUI: {fileID: 0}
+  _numberCarReadyUI: {fileID: 0}
   _fondoLobby: {fileID: 47358621}
   _playerNameUI: {fileID: 39367520}
   _playerNameInput: {fileID: 1302648568}

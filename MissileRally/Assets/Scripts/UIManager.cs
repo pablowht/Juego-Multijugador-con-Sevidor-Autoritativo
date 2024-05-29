@@ -99,7 +99,9 @@ public class UIManager : MonoBehaviour
     {
         botonCarReady.GetComponent<Button>().interactable = false;
         _carReadyUI.SetActive(true);
-        GameManager.Instance.IncrementCarReadyServerRpc();
+        GameManager.Instance.ntGameInfo.IncrementCarReadyServerRpc();
+        //GameManager.Instance.actualPlayer.IncrementCarReady();
+
     }
 
     public void DisableUIToStartRace()
