@@ -8,7 +8,7 @@ public class NetworkGameManager : NetworkBehaviour
 {
     private int serverCountCar = 0;
     private int[] carsCheckpoints = new int[4]; 
-    public CheckPoint[] checkpoints = new CheckPoint[10]; 
+    public CheckPoint[] checkpoints = new CheckPoint[20]; 
     //ELEFANTE: no es la solución más eficiente sobre todo en cuanto a escalabilidad
 
     #region Ready Button and input activate
