@@ -214,4 +214,13 @@ public class CarController : NetworkBehaviour
     }
 
     #endregion
+
+
+    #region colisiones
+    private void OnCollisionEnter(Collision collision)
+    {
+        print("colision");
+        GameManager.Instance.ntGameInfo.restorePositionServerRpc(GameManager.Instance.actualPlayer.ID);
+    }
+    #endregion
 }

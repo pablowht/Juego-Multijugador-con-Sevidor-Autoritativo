@@ -1,6 +1,7 @@
 using Cinemachine;
 using System;
 using System.Collections;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -65,43 +66,19 @@ public class GameManager : MonoBehaviour
 
     }
 
-    //public void OnCarsReadyChanged(int previousValue, int newValue)
-    //{
-    //    carsReadyToRace = newValue;
-    //    Debug.Log($"Cars Ready Changed: {previousValue} -> {newValue}");
-    //    UIManager.Instance._numberCarReadyUI.SetText(newValue.ToString());
-    //    if (carsReadyToRace >= 2)
-    //    {
-    //        BeginRace();
-    //    }
-    //}
-
     public void BeginRace()
     {
         EnablePlayerInputs();
         UIManager.Instance.DisableUIToStartRace();
     }
 
-    //[ServerRpc(RequireOwnership = false)]
-    //public void IncrementCarReadyServerRpc()
-    //{
-    //    Debug.Log($"Before Increment: {carsReadyToRace_ntw.Value}");
-    //    carsReadyToRace_ntw.Value += 1;
-    //    Debug.Log($"After Increment: {carsReadyToRace_ntw.Value}");
-    //}
-    //public void IncrementCarReady()
-    //{
-    //    Debug.Log($"Before Increment: {carsReadyToRace_ntw.Value}");
-    //    carsReadyToRace_ntw.Value += 1;
-    //    Debug.Log($"After Increment: {carsReadyToRace_ntw.Value}");
-    //}
-
-    private void EnablePlayerInputs()
+    public void EnablePlayerInputs()
     {
         print("numero readys: " + carsReadyToRace);
 
         print(NetworkManager.Singleton.SpawnManager.SpawnedObjectsList.Count);
         
+        //ELEFANTE - DUDA: no entiendo porque motivo solo se activa el server!!!
         foreach (var networkObject in NetworkManager.Singleton.SpawnManager.SpawnedObjectsList)
         {
             print("fuera " + networkObject.name);
@@ -131,7 +108,7 @@ public class GameManager : MonoBehaviour
         //    cocheEnCarrera = true;
         //}
         print("Local: " + mapScene);
-        print("coches readys: " + carsReadyToRace);
+        //print("coches readys: " + carsReadyToRace);
         //print("Network: "+ mapSelected.Value);
     }
 
@@ -146,6 +123,7 @@ public class GameManager : MonoBehaviour
         if (NetworkManager.Singleton.IsServer)
         {
             connectedPlayers--;
+            ntGameInfo.removeCarServerRpc();
             //PENDIENTE - ELEFANTE: disminuir variable de personajes listos
         }
     }
@@ -155,6 +133,7 @@ public class GameManager : MonoBehaviour
         mapaNumeroLocal = mapaNumero.Value;
         StartCoroutine(WaitTillSceneLoaded());
         ConnectToRace();
+        
 
         if (NetworkManager.Singleton.IsServer)
         {
@@ -163,6 +142,14 @@ public class GameManager : MonoBehaviour
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
             //actualPlayer = player.GetComponent<Player>();
             connectedPlayers++;
+
+            //print(GameObject.FindWithTag("Checkpoint").GetComponent<FindCheckPoints>().points);
+            //print(GameObject.FindWithTag("Checkpoint").GetComponent<FindCheckPoints>().points.Length);
+
+            //ntGameInfo.initialiceServerRpc();
+            ntGameInfo.checkpoints = GameObject.FindWithTag("Checkpoint").GetComponent<FindCheckPoints>().points;
+            //print(ntGameInfo.checkpoints);
+            //print(ntGameInfo.checkpoints.Length);
         }
     }
     private IEnumerator WaitTillSceneLoaded()
@@ -170,6 +157,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitUntil(() => SceneManager.GetActiveScene().isLoaded);
     }
 
+    //ELEFANTE -> no deberia quitarse??
     //public NetworkVariable<FixedString32Bytes> mapSelected = new NetworkVariable<FixedString32Bytes>();
     public NetworkVariable<int> mapaNumero = new NetworkVariable<int>();
     public int mapaNumeroLocal;
@@ -206,7 +194,7 @@ public class GameManager : MonoBehaviour
         virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
         UIManager.Instance._raceCodeUI.SetText(joinCodeNumber);
         prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[0].Prefab;
-
+        //ntGameInfo.initialiceServerRpc();
 
         //SetMapSelected(mapScene);
     }
