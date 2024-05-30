@@ -196,7 +196,8 @@ public class UIManager : MonoBehaviour
 
     public void SetPlayerName()
     {
-        if (_playerNameInput.text != "" && _playerNameInput.text != " ")
+        //if (_playerNameInput.text != "" && _playerNameInput.text != " ")
+        if (!string.IsNullOrWhiteSpace(_playerNameInput.text.Trim()) && !_playerNameInput.text.Contains(" "))
         {
             GameManager.Instance.actualPlayerInfo.playerName = _playerNameInput.text;
             _playerNameUI.text = _playerNameInput.text;

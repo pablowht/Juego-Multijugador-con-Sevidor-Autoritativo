@@ -8,7 +8,8 @@ public class NetworkGameManager : NetworkBehaviour
 {
     private int serverCountCar = 0;
     private int[] carsCheckpoints = new int[4]; 
-    public CheckPoint[] checkpoints = new CheckPoint[20]; 
+    public CheckPoint[] checkpoints;
+    public List<Player> currentPlayerInstance = new List<Player>();
     //ELEFANTE: no es la solución más eficiente sobre todo en cuanto a escalabilidad
 
     #region Ready Button and input activate
@@ -67,43 +68,46 @@ public class NetworkGameManager : NetworkBehaviour
     }
     #endregion
 
-
     #region checkpoints
 
     [ServerRpc(RequireOwnership = false)]
     public void updateCheckpointServerRpc(int clientID, int last)
     {
-        carsCheckpoints[clientID] = last;
-        print(last);
+        print("ultimo"+last);
+        print("id"+clientID);
+        //if(last != carsCheckpoints[clientID] - 1 || (last != checkpoints.Length-1 & carsCheckpoints[clientID] != 0))
+        if(last != carsCheckpoints[clientID] - 1)
+        {
+            carsCheckpoints[clientID] = last;
+        }
+        else
+        {
+            restorePositionServerRpc(clientID);
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void restorePositionServerRpc(int idx)
     {
-        //print("antes: " + GameManager.Instance.actualPlayer.car.transform.position);
-        //GameManager.Instance.actualPlayer.car.transform.position = checkpoints[carsCheckpoints[idx]].position.position;
-        //print("pos: " + GameManager.Instance.actualPlayer.car.transform.position);
-        //GameManager.Instance.actualPlayer.carController.InputAcceleration = 0;
-        //GameManager.Instance.actualPlayer.carController.InputSteering = 0;
         //ELEFANTE: hay que ver el tema de si dos coches se estampan a la vez, ambos se respawnean en misma posición -> collisionan
         //bucle de instanciarse y xd
-        print(idx);
-        print(GameManager.Instance.actualPlayer.ID);
-        moveClientRpc(idx, checkpoints[carsCheckpoints[idx]].position.position);
+
+        print("moviendo...");
+        print("id: "+idx);
+        GameManager.Instance.ntGameInfo.currentPlayerInstance[idx].car.transform.position = checkpoints[carsCheckpoints[idx]].position.position;
+        GameManager.Instance.ntGameInfo.currentPlayerInstance[idx].car.transform.rotation = checkpoints[carsCheckpoints[idx]].position.rotation;
+        GameManager.Instance.ntGameInfo.currentPlayerInstance[idx].carController._rigidbody.velocity = Vector3.zero;
+        GameManager.Instance.ntGameInfo.currentPlayerInstance[idx].carController._rigidbody.angularVelocity = Vector3.zero;
+        //moveClientRpc(idx, checkpoints[carsCheckpoints[idx]].position.rotation, checkpoints[carsCheckpoints[idx]].position.position);
     }
 
     [ClientRpc]
-    public void moveClientRpc(int idx, Vector3 position)
+    public void collisionOccurredClientRpc()
     {
-        if (idx == GameManager.Instance.actualPlayer.ID)
+        if (IsOwner)
         {
-            print(idx);
-            print("moviendo al checkpoint...");
-            GameManager.Instance.actualPlayer.car.transform.position = position;
-            GameManager.Instance.actualPlayer.carController.InputAcceleration = 0;
-            GameManager.Instance.actualPlayer.carController.InputSteering = 0;
-            print(GameManager.Instance.actualPlayer.carController.InputAcceleration);
-            print(GameManager.Instance.actualPlayer.carController.InputSteering);
+            print(GameManager.Instance.actualPlayer.ID);
+            //restorePositionServerRpc(GameManager.Instance.actualPlayer.ID);
         }
     }
     #endregion

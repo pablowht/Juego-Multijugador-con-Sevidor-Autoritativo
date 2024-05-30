@@ -16,16 +16,17 @@ public class Player : NetworkBehaviour
     public GameObject car;
     public CarController carController; //Esta variable la he puesto pública para poder cambiar la aguja en la UI pero no se si hay mejores opciones
     //CONEJO: que vaya sumando cada vez que visita un checkpoint y se resetee por cada vuelta
-    public int visitedCheckpoints = 0;
 
     public int CurrentPosition { get; set; }
     public int CurrentLap { get; set; }
 
     // Player Objects
     private CinemachineVirtualCamera _vPlayerCamera;
+    public bool[] visitedCheckpoint = new bool[20];
+    public int count = 0;
+    public int rankPosition = 0;
 
     // información color
-    //Material colorCoche;
     NetworkVariable<int> networkColorIdx = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     //esta variable SOLO puede ser escrita por el propio owner, el servidor NO puede escribirla, solo leerla
     //para actualizar la información al resto de clientes
@@ -71,18 +72,22 @@ public class Player : NetworkBehaviour
         SetupColor();
         if (IsOwner)
         {
-
             ntID = OwnerClientId;
             ID = (int)ntID;
-
-            GameManager.Instance.currentRace.AddPlayer(this);
             
             GameManager.Instance.actualPlayer = this;
+            GameManager.Instance.currentRace.AddPlayer(this);
 
             Name = GameManager.Instance.actualPlayerInfo.playerName;
             print(Name);
             GameManager.Instance.nombrePlayer = Name;
             SetupCamera();
+        }
+
+        if (IsServer)
+        {
+            print("jugador añadido");
+            GameManager.Instance.ntGameInfo.currentPlayerInstance.Add(this);
         }
     }
 
@@ -129,7 +134,7 @@ public class Player : NetworkBehaviour
         _vPlayerCamera.LookAt = car.GetComponent<Transform>();
     }
 
-    
+
     #endregion
 
     #region Input

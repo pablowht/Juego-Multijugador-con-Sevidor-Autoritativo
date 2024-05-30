@@ -75,19 +75,19 @@ public class GameManager : MonoBehaviour
 
     public void EnablePlayerInputs()
     {
-        print("numero readys: " + carsReadyToRace);
+        //print("numero readys: " + carsReadyToRace);
 
-        print(NetworkManager.Singleton.SpawnManager.SpawnedObjectsList.Count);
+        //print(NetworkManager.Singleton.SpawnManager.SpawnedObjectsList.Count);
         
         //ELEFANTE - DUDA: no entiendo porque motivo solo se activa el server!!!
         foreach (var networkObject in NetworkManager.Singleton.SpawnManager.SpawnedObjectsList)
         {
-            print("fuera " + networkObject.name);
+            //print("fuera " + networkObject.name);
 
             // Verificamos si el objeto tiene el componente Player
             if (networkObject.TryGetComponent<Player>(out var player))
             {
-                print("dentro" + player.name);
+                //print("dentro" + player.name);
                 player.EnablePlayerInput();
             }
         }
@@ -188,12 +188,12 @@ public class GameManager : MonoBehaviour
 
         //DUDA 1
 
-        print("Variable: " + mapaNumeroLocal);
-        print("Escena: " + SceneManager.GetActiveScene().name);
+        //print("Variable: " + mapaNumeroLocal);
+        //print("Escena: " + SceneManager.GetActiveScene().name);
         //mapScene = SceneManager.GetActiveScene().name;
         currentCircuit = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<CircuitController>();
-        currentRace = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<RaceController>();
         virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
+        currentRace = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<RaceController>();
         _chronometer = UIManager.Instance._chronometer.GetComponent<Chronometer>();
         UIManager.Instance._raceCodeUI.SetText(joinCodeNumber);
         prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[0].Prefab;

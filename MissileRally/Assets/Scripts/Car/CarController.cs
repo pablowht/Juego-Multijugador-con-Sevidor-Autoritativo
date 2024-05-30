@@ -24,17 +24,15 @@ public class CarController : NetworkBehaviour
 
     //private PlayerInfo m_PlayerInfo;
 
-    private Rigidbody _rigidbody;
+    public Rigidbody _rigidbody;
     private float _steerHelper = 0.8f;
-
-
     private float _currentSpeed = 0;
 
     //He puesto pública la velocidad pero privada su set para poder utilizarla para la needle
     public float Speed
     {
         get => _currentSpeed;
-        private set
+        set
         {
             if (Math.Abs(_currentSpeed - value) < float.Epsilon) return;
             _currentSpeed = value;
@@ -217,11 +215,31 @@ public class CarController : NetworkBehaviour
 
 
     #region colisiones
-    private void OnCollisionEnter(Collision collision)
+    public void OnCollisionEnter(Collision collision)
     {
+        //ELEFANTE GRANDE TRISTE: solo detecta la colisión el host, también detecta la del resto de clientes
+        //pero un cliente no detecta que EL ha tenido colisión, y cuando detecta el host que hay colisión
+        //su Id es el del actualPlayer QUE NO ES EL CORRECTO
+        //print("colision");
+        //if (IsOwner)
+        //{
+        //    print("id coliison: " + GameManager.Instance.actualPlayer.ID);
+        //    GameManager.Instance.ntGameInfo.restorePositionServerRpc(GameManager.Instance.actualPlayer.ID);
+        //}
         print("colision");
-        //ELEFANTE
-        GameManager.Instance.ntGameInfo.restorePositionServerRpc(GameManager.Instance.actualPlayer.ID);
+        //GameManager.Instance.ntGameInfo.collisionOccurredClientRpc();
+        collisionOccurredClientRpc();
     }
+
+    [ClientRpc]
+    public void collisionOccurredClientRpc()
+    {
+        if (IsOwner)    //ELEFANTE: si se llama al del network game manager NO FUNCIONA, si se hace aqui si, no se
+        {
+            GameManager.Instance.ntGameInfo.restorePositionServerRpc(GameManager.Instance.actualPlayer.ID);
+        }
+    }
+
+
     #endregion
 }
