@@ -29,6 +29,7 @@ public class RaceController : MonoBehaviour
         UpdateRaceProgress();
     }
 
+    //CONEJO: Me da a mi que aqui hay que tener una variable network para que todos los jugadores sepan que jugadores están conectados a la carrera
     public void AddPlayer(Player player)
     {
         _players.Add(player);

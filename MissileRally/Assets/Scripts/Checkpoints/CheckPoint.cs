@@ -9,9 +9,11 @@ public class CheckPoint : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-       if(other == GameManager.Instance.actualPlayer.car.gameObject.GetComponent<BoxCollider>())
+       if(other == GameManager.Instance.actualPlayer.car.GetComponent<BoxCollider>())
        {
             GameManager.Instance.ntGameInfo.updateCheckpointServerRpc(GameManager.Instance.actualPlayer.ID, cpName);
+            GameManager.Instance.actualPlayer.visitedCheckpoints++;
+            print("Checkpoints visitados: " + GameManager.Instance.actualPlayer.visitedCheckpoints);
        }
     }
 }

@@ -74,6 +74,7 @@ public class UIManager : MonoBehaviour
 
     #region GameInfo UI
 
+    [Header("Speedometer Info")]
     [SerializeField] public GameObject _speedometer;
     [SerializeField] private GameObject _speedometerNeedle;
     private float startNeedlePosition = 217.8f;
@@ -81,6 +82,9 @@ public class UIManager : MonoBehaviour
     private float needlePosition;
     private float vehicleSpeed;
     //public CarController _carController;
+
+    [Header("GameObjects Varios")]
+    [SerializeField] public GameObject _chronometer;
 
     public void updateSpeedometer()
     {
@@ -113,6 +117,7 @@ public class UIManager : MonoBehaviour
         _carReadyUI.SetActive(false);
         botonCarReady.SetActive(false);
         _speedometer.SetActive(true);
+        _chronometer.SetActive(true);
     }
 
     #endregion
@@ -177,6 +182,7 @@ public class UIManager : MonoBehaviour
     [Header("Lobby - Player")]
     [SerializeField] private TextMeshProUGUI _playerNameUI;
     [SerializeField] private TMP_InputField _playerNameInput;
+    [SerializeField] private GameObject _incorrectPlayerName;
 
     [Header("Lobby - Network UI")]
     [SerializeField] private GameObject _networkUI;
@@ -190,11 +196,19 @@ public class UIManager : MonoBehaviour
 
     public void SetPlayerName()
     {
-        GameManager.Instance.actualPlayerInfo.playerName = _playerNameInput.text;
-        _playerNameUI.text = _playerNameInput.text;
-        _playerNameInput.gameObject.SetActive(false);
-        _fondoLobby.SetActive(false);
-        _carSelectionUI.SetActive(true);
+        if (_playerNameInput.text != "" && _playerNameInput.text != " ")
+        {
+            GameManager.Instance.actualPlayerInfo.playerName = _playerNameInput.text;
+            _playerNameUI.text = _playerNameInput.text;
+            _playerNameInput.gameObject.SetActive(false);
+            _fondoLobby.SetActive(false);
+            _carSelectionUI.SetActive(true);
+            if (_incorrectPlayerName.activeSelf) _incorrectPlayerName.SetActive(false);
+        }
+        else
+        {
+            _incorrectPlayerName.SetActive(true);
+        }
     }
 
    

@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 
     public RaceController currentRace;
     public CircuitController currentCircuit;
+    public Chronometer _chronometer;
 
     public CinemachineVirtualCamera virtualCamera;
 
@@ -193,6 +194,7 @@ public class GameManager : MonoBehaviour
         currentCircuit = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<CircuitController>();
         currentRace = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<RaceController>();
         virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
+        _chronometer = UIManager.Instance._chronometer.GetComponent<Chronometer>();
         UIManager.Instance._raceCodeUI.SetText(joinCodeNumber);
         prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[0].Prefab;
         //ntGameInfo.initialiceServerRpc();

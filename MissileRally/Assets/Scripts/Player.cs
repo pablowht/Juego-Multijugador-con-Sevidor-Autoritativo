@@ -15,6 +15,8 @@ public class Player : NetworkBehaviour
     // Race Info
     public GameObject car;
     public CarController carController; //Esta variable la he puesto pública para poder cambiar la aguja en la UI pero no se si hay mejores opciones
+    //CONEJO: que vaya sumando cada vez que visita un checkpoint y se resetee por cada vuelta
+    public int visitedCheckpoints = 0;
 
     public int CurrentPosition { get; set; }
     public int CurrentLap { get; set; }
@@ -81,7 +83,6 @@ public class Player : NetworkBehaviour
             print(Name);
             GameManager.Instance.nombrePlayer = Name;
             SetupCamera();
-
         }
     }
 
