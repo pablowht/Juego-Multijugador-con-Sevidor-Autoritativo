@@ -29,7 +29,7 @@ public class NetworkGameManager : NetworkBehaviour
         {
             //CORRUTINA QUE ESPERE X SEGUNDOS DEL SEMÁFORO
             GameManager.Instance.BeginRace();
-            GameManager.Instance.EnablePlayerInputs();
+            //GameManager.Instance.EnablePlayerInputs();
             activateInputClientRpc();
         }
     }
@@ -46,6 +46,14 @@ public class NetworkGameManager : NetworkBehaviour
     {
         GameManager.Instance.actualPlayer.EnablePlayerInput();
         UIManager.Instance.DisableUIToStartRace();
+    }    
+    
+    [ClientRpc(RequireOwnership = false)]
+    public void updateSpeedClientRpc(float newVal)
+    {
+        print("update");
+        //GameManager.Instance.actualPlayerInfo.playerSpeed = newVal;
+        //print("velo ClientRpc: " + GameManager.Instance.actualPlayerInfo.playerSpeed);
     }
 
     [ServerRpc]
@@ -72,13 +80,31 @@ public class NetworkGameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void restorePositionServerRpc(int idx)
     {
-        print("antes: " + GameManager.Instance.actualPlayer.GetComponent<Transform>().position);
-        GameManager.Instance.actualPlayer.GetComponent<Transform>().position = checkpoints[carsCheckpoints[idx]].position.position;
-        print("pos: " + GameManager.Instance.actualPlayer.GetComponent<Transform>().position);
-        GameManager.Instance.actualPlayer.carController.InputAcceleration = 0;
-        GameManager.Instance.actualPlayer.carController.InputSteering = 0;
+        //print("antes: " + GameManager.Instance.actualPlayer.car.transform.position);
+        //GameManager.Instance.actualPlayer.car.transform.position = checkpoints[carsCheckpoints[idx]].position.position;
+        //print("pos: " + GameManager.Instance.actualPlayer.car.transform.position);
+        //GameManager.Instance.actualPlayer.carController.InputAcceleration = 0;
+        //GameManager.Instance.actualPlayer.carController.InputSteering = 0;
         //ELEFANTE: hay que ver el tema de si dos coches se estampan a la vez, ambos se respawnean en misma posición -> collisionan
         //bucle de instanciarse y xd
+        print(idx);
+        print(GameManager.Instance.actualPlayer.ID);
+        moveClientRpc(idx, checkpoints[carsCheckpoints[idx]].position.position);
+    }
+
+    [ClientRpc]
+    public void moveClientRpc(int idx, Vector3 position)
+    {
+        if (idx == GameManager.Instance.actualPlayer.ID)
+        {
+            print(idx);
+            print("moviendo al checkpoint...");
+            GameManager.Instance.actualPlayer.car.transform.position = position;
+            GameManager.Instance.actualPlayer.carController.InputAcceleration = 0;
+            GameManager.Instance.actualPlayer.carController.InputSteering = 0;
+            print(GameManager.Instance.actualPlayer.carController.InputAcceleration);
+            print(GameManager.Instance.actualPlayer.carController.InputSteering);
+        }
     }
     #endregion
 }

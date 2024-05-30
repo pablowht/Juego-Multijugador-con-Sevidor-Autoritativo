@@ -220,6 +220,7 @@ public class CarController : NetworkBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         print("colision");
+        //ELEFANTE
         GameManager.Instance.ntGameInfo.restorePositionServerRpc(GameManager.Instance.actualPlayer.ID);
     }
     #endregion

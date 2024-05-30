@@ -80,14 +80,18 @@ public class UIManager : MonoBehaviour
     private float endNeedlePosition = -39.4f;
     private float needlePosition;
     private float vehicleSpeed;
-    public CarController _carController;
+    //public CarController _carController;
 
     public void updateSpeedometer()
     {
-        vehicleSpeed = _carController.Speed;
+        //print(GameManager.Instance.actualPlayerInfo.playerSpeed);
+        //vehicleSpeed = GameManager.Instance.actualPlayerInfo.playerSpeed;
+        //ELEFANTE ENORME GRANDISIMO
+        vehicleSpeed = GameManager.Instance.actualPlayer.carController.Speed;
         needlePosition = startNeedlePosition - endNeedlePosition;
         float temp = vehicleSpeed / 60;
         _speedometerNeedle.transform.eulerAngles = new Vector3 (0, 0, (startNeedlePosition - temp * needlePosition));
+        print("sale");
     }
 
     //private bool carRaceOn = false;

@@ -8,4 +8,5 @@ public class PlayerInfo
     public string playerName;
     public int playerId;
     public int playerCar;
+    //public float playerSpeed;
 }

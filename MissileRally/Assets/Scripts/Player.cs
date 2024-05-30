@@ -10,6 +10,7 @@ public class Player : NetworkBehaviour
     // Player Info
     public string Name { get; set; }
     public int ID { get; set; }
+    public ulong ntID { get; set;}
 
     // Race Info
     public GameObject car;
@@ -36,17 +37,24 @@ public class Player : NetworkBehaviour
     private void Start()
     {
         carController = car.GetComponent<CarController>();
-        UIManager.Instance._carController = carController;
+        //UIManager.Instance._carController = carController;
         //if (IsOwner)
         //{
         //    GetComponent<PlayerInput>().enabled = true;
         //}
         networkColorIdx.OnValueChanged += OnSetColor;
-        GameManager.Instance.actualPlayer = this;
-        print("actualPlayerCopia: " + GameManager.Instance.actualPlayer.name);
+        //print("actualPlayerCopia: " + GameManager.Instance.actualPlayer.name);
         //carsReadyToRace_ntw.OnValueChanged += OnCarsReadyChanged;
 
+        //carController.OnSpeedChangeEvent += updatePlayerSpeed;
+
     }
+
+    //private void updatePlayerSpeed(float newVal)
+    //{
+    //    GameManager.Instance.actualPlayerInfo.playerSpeed = newVal; //para el servidor
+    //    //GameManager.Instance.ntGameInfo.updateSpeedClientRpc(newVal); //para los clientes
+    //}
 
 
     #region Network
@@ -62,13 +70,18 @@ public class Player : NetworkBehaviour
         if (IsOwner)
         {
 
-            ID = (int)OwnerClientId;
+            ntID = OwnerClientId;
+            ID = (int)ntID;
 
             GameManager.Instance.currentRace.AddPlayer(this);
+            
+            GameManager.Instance.actualPlayer = this;
 
+            Name = GameManager.Instance.actualPlayerInfo.playerName;
+            print(Name);
+            GameManager.Instance.nombrePlayer = Name;
             SetupCamera();
 
-            //namePlayer.SetText(OwnerClientId.ToString());
         }
     }
 

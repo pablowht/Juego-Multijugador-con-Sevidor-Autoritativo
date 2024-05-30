@@ -7,7 +7,6 @@ public class CheckPoint : MonoBehaviour
     public Transform position;
     public int cpName;
 
-
     private void OnTriggerEnter(Collider other)
     {
        if(other == GameManager.Instance.actualPlayer.car.gameObject.GetComponent<BoxCollider>())

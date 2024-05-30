@@ -128,6 +128,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public string nombrePlayer;
     private void OnClientConnected(ulong obj)
     {
         mapaNumeroLocal = mapaNumero.Value;
