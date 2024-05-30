@@ -69,8 +69,32 @@ public class GameManager : MonoBehaviour
 
     public void BeginRace()
     {
+        UIManager.Instance._waitingPlayersText.SetText("Race Starting...");
+        StartCoroutine(UpdateSemaphoreOrange());
+    }
+
+    IEnumerator StopSemaphore()
+    {
+        yield return new WaitForSeconds(1);
+        print("SALIENDOOOOOOOOOOOOOOOOOOOO");
+        UIManager.Instance._semaphoreCamera.SetActive(false);
+    }
+
+    IEnumerator UpdateSemaphoreOrange()
+    {
+        UIManager.Instance._semaphore.UpdateToRed();
+        yield return new WaitForSeconds(2);
+        UIManager.Instance._semaphore.UpdateToOrange();
+        StartCoroutine(UpdateSemaphoreGreen());
+    }
+    IEnumerator UpdateSemaphoreGreen()
+    {
+        yield return new WaitForSeconds(2);
+        UIManager.Instance._semaphore.UpdateToGreen();
+        //ntGameInfo.activateInputClientRpc(); // ESTO QUIZäs HAY QUE ACTIVARLO no lo he llegado a probar, pero con él funciona todo bien
         EnablePlayerInputs();
         UIManager.Instance.DisableUIToStartRace();
+        StartCoroutine(StopSemaphore());
     }
 
     public void EnablePlayerInputs()
@@ -94,24 +118,24 @@ public class GameManager : MonoBehaviour
     }
 
     //bool cocheEnCarrera = false;
-    private void Update()
-    {
-        //EVENTO para gestionar mejor lo siguiente:
-        //if ((SceneManager.GetActiveScene().name == mapScene) && !cocheEnCarrera)
-        //{
-        //    print("Hola");
-        //    currentCircuit = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<CircuitController>();
-        //    currentRace = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<RaceController>();
-        //    virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
+    //private void Update()
+    //{
+    //    //EVENTO para gestionar mejor lo siguiente:
+    //    //if ((SceneManager.GetActiveScene().name == mapScene) && !cocheEnCarrera)
+    //    //{
+    //    //    print("Hola");
+    //    //    currentCircuit = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<CircuitController>();
+    //    //    currentRace = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<RaceController>();
+    //    //    virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
 
 
-        //    ConnectToRace();
-        //    cocheEnCarrera = true;
-        //}
-        print("Local: " + mapScene);
-        //print("coches readys: " + carsReadyToRace);
-        //print("Network: "+ mapSelected.Value);
-    }
+    //    //    ConnectToRace();
+    //    //    cocheEnCarrera = true;
+    //    //}
+    //    print("Local: " + mapScene);
+    //    //print("coches readys: " + carsReadyToRace);
+    //    //print("Network: "+ mapSelected.Value);
+    //}
 
     #region Network
     private void OnServerStarted()

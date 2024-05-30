@@ -85,6 +85,8 @@ public class UIManager : MonoBehaviour
 
     [Header("GameObjects Varios")]
     [SerializeField] public GameObject _chronometer;
+    [SerializeField] public GameObject _semaphoreCamera;
+    [SerializeField] public SemaphoreController _semaphore;
 
     public void updateSpeedometer()
     {
@@ -100,13 +102,16 @@ public class UIManager : MonoBehaviour
 
     //private bool carRaceOn = false;
     [Header("Car Ready")]
-    [SerializeField] private GameObject botonCarReady;
+    [SerializeField] public GameObject botonCarReady;
     [SerializeField] private GameObject _carReadyUI;
+    [SerializeField] public TextMeshProUGUI _waitingPlayersText;
     [SerializeField] public TextMeshProUGUI _numberCarReadyUI;
     public void CarReadyForRace()
     {
         botonCarReady.GetComponent<Button>().interactable = false;
         _carReadyUI.SetActive(true);
+        _semaphoreCamera.SetActive(true);
+        _semaphore.UpdateToRed();
         GameManager.Instance.ntGameInfo.IncrementCarReadyServerRpc();
         //GameManager.Instance.actualPlayer.IncrementCarReady();
 

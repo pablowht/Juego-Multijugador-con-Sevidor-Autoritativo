@@ -40,17 +40,7 @@ public class Player : NetworkBehaviour
     private void Start()
     {
         carController = car.GetComponent<CarController>();
-        //UIManager.Instance._carController = carController;
-        //if (IsOwner)
-        //{
-        //    GetComponent<PlayerInput>().enabled = true;
-        //}
         networkColorIdx.OnValueChanged += OnSetColor;
-        //print("actualPlayerCopia: " + GameManager.Instance.actualPlayer.name);
-        //carsReadyToRace_ntw.OnValueChanged += OnCarsReadyChanged;
-
-        //carController.OnSpeedChangeEvent += updatePlayerSpeed;
-
     }
 
     //private void updatePlayerSpeed(float newVal)
@@ -82,6 +72,8 @@ public class Player : NetworkBehaviour
             print(Name);
             GameManager.Instance.nombrePlayer = Name;
             SetupCamera();
+
+            UIManager.Instance.botonCarReady.SetActive(true);
         }
 
         if (IsServer)

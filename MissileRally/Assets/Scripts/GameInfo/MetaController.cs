@@ -36,6 +36,8 @@ public class MetaController : MonoBehaviour
                  - en la misma escena: se bloquea el player input de los jugadores y se pone encima la UI
                  - en otra escena: se llama a un serverRPC que cambie la escena (no se si habría que quitar el input igualmente)
                  */
+                UIManager.Instance._semaphore.UpdateToRed();
+                GameManager.Instance._chronometer.UpdateLapTime(maxLaps - 1);
                 GameManager.Instance._chronometer.StopChronometer();
             }
         }

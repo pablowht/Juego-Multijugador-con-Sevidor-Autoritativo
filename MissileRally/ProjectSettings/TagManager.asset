@@ -16,6 +16,9 @@ TagManager:
   - VirtualCamera
   - Arena
   - Checkpoint
+  - Semaphore Camera
+  - Semaphore Virtual
+  - Semaphore
   layers:
   - Default
   - TransparentFX
@@ -23,8 +26,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Smeaphore Camera Layer
+  - Main Camera Layer
   - 
   - 
   - 
