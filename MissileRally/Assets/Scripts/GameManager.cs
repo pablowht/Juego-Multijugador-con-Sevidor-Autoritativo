@@ -1,14 +1,13 @@
 using Cinemachine;
 using System;
 using System.Collections;
-using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public int numPlayers = 50;
+    public int numPlayers = 6;
     public int connectedPlayers = 0;
 
     public RaceController currentRace;
@@ -32,6 +31,8 @@ public class GameManager : MonoBehaviour
     //public NetworkVariable<int> carsReadyToRace_ntw = new NetworkVariable<int>(0);
     public int carsReadyToRace = 0;
     public static GameManager Instance { get; private set; }
+
+    public int finishedPlayers = 0;
 
     void Awake()
     {
@@ -148,6 +149,7 @@ public class GameManager : MonoBehaviour
         {
             connectedPlayers--;
             ntGameInfo.removeCarServerRpc();
+
             //PENDIENTE - ELEFANTE: disminuir variable de personajes listos
         }
     }
@@ -155,7 +157,6 @@ public class GameManager : MonoBehaviour
     public string nombrePlayer;
     private void OnClientConnected(ulong obj)
     {
-        mapaNumeroLocal = mapaNumero.Value;
         StartCoroutine(WaitTillSceneLoaded());
         ConnectToRace();
         
@@ -165,15 +166,11 @@ public class GameManager : MonoBehaviour
             Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
             var player = Instantiate(prefabPlayer, playerStartingPosition);
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
+
+            //currentRace.AddPlayer(player.GetComponent<Player>());
+            
             //actualPlayer = player.GetComponent<Player>();
             connectedPlayers++;
-
-            //print(GameObject.FindWithTag("Checkpoint").GetComponent<FindCheckPoints>().points);
-            //print(GameObject.FindWithTag("Checkpoint").GetComponent<FindCheckPoints>().points.Length);
-
-            //ntGameInfo.initialiceServerRpc();
-            //print(ntGameInfo.checkpoints);
-            //print(ntGameInfo.checkpoints.Length);
         }
     }
     private IEnumerator WaitTillSceneLoaded()
@@ -181,38 +178,12 @@ public class GameManager : MonoBehaviour
         yield return new WaitUntil(() => SceneManager.GetActiveScene().isLoaded);
     }
 
-    //ELEFANTE -> no deberia quitarse??
-    //public NetworkVariable<FixedString32Bytes> mapSelected = new NetworkVariable<FixedString32Bytes>();
-    public NetworkVariable<int> mapaNumero = new NetworkVariable<int>();
-    public int mapaNumeroLocal;
-    public string[] mapasNombre = { "NascarScene", "RainyScene", "OasisScene", "OwlPlainsScene" };
-    public Material[] coloresMaterial;
 
-    public void SetMapSelected(int mapNumber)
-    {
-        if (NetworkManager.Singleton.IsServer)
-        {
-            mapaNumero.Value = mapNumber;
-            mapaNumeroLocal = mapaNumero.Value;
-            //mapScene = mapasNombre[mapNumber];
-        }
-    }
+    public Material[] coloresMaterial;
 
 
     public void ConnectToRace()
     {
-        //if (NetworkManager.Singleton.IsServer)
-        //{
-        //    //mapaNumero.Value = mapNumber;
-
-        //    //mapScene = mapasNombre[mapNumber];
-        //}
-
-        //DUDA 1
-
-        //print("Variable: " + mapaNumeroLocal);
-        //print("Escena: " + SceneManager.GetActiveScene().name);
-        //mapScene = SceneManager.GetActiveScene().name;
         currentCircuit = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<CircuitController>();
         virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
         currentRace = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<RaceController>();
@@ -220,9 +191,6 @@ public class GameManager : MonoBehaviour
         _chronometer = UIManager.Instance._chronometer.GetComponent<Chronometer>();
         UIManager.Instance._raceCodeUI.SetText(UIManager.Instance.joinCode);
         prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[0].Prefab;
-        //ntGameInfo.initialiceServerRpc();
-
-        //SetMapSelected(mapScene);
     }
     #endregion
 

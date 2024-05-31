@@ -1,7 +1,6 @@
 using Cinemachine;
 using System;
 using TMPro;
-using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -14,6 +13,7 @@ public class Player : NetworkBehaviour
     public string Name { get; set; }
     public int ID { get; set; }
     public ulong ntID { get; set;}
+    
 
     // Race Info
     public GameObject car;
@@ -29,6 +29,7 @@ public class Player : NetworkBehaviour
     public int count = 0;
     public int rankPosition = 0;
     public float coefRed = 1;
+    public float distancia = 0;
 
     // información color
     NetworkVariable<int> networkColorIdx = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
@@ -67,7 +68,6 @@ public class Player : NetworkBehaviour
     {
         SetupPlayer();
     }
-
     void SetupPlayer()
     {
         SetupColor();
@@ -78,7 +78,7 @@ public class Player : NetworkBehaviour
             ID = (int)ntID;
             
             GameManager.Instance.actualPlayer = this;
-            GameManager.Instance.currentRace.AddPlayer(this);
+            //GameManager.Instance.currentRace.AddPlayer(this);
 
             //Name = GameManager.Instance.actualPlayerInfo.playerName;
             //GameManager.Instance.nombrePlayer = Name;
@@ -92,6 +92,8 @@ public class Player : NetworkBehaviour
         {
             print("jugador añadido");
             GameManager.Instance.ntGameInfo.currentPlayerInstance.Add(this);
+            GameManager.Instance.currentRace.AddPlayer(this);
+
             GameManager.Instance.ntGameInfo.sendCodeClientRpc(GameManager.Instance.ntGameInfo.code);
         }
     }
@@ -143,14 +145,6 @@ public class Player : NetworkBehaviour
     {
         _playerNameUI.SetText(newValue.ToString());
     }
-    //private void OnSetName(ForceNetworkSerializeByMemcpy<FixedString32Bytes> previousValue, ForceNetworkSerializeByMemcpy<FixedString32Bytes> newValue)
-    //{
-    //    _playerNameUI.SetText(newValue.ToString());
-    //}
-    //void OnSetName(FixedString32Bytes previousValue, FixedString32Bytes newValue)
-    //{
-    //    _playerNameUI.SetText(newValue.ToString());
-    //}
 
     public void EnablePlayerInput()
     {
@@ -168,6 +162,19 @@ public class Player : NetworkBehaviour
         _vPlayerCamera.LookAt = car.GetComponent<Transform>();
     }
     #endregion
+
+    [ClientRpc]
+    public void orderRaceClientRpc(int orden)
+    {
+        print("clientRPc");
+        if (IsOwner)
+        {
+            //actualizar ui
+            UIManager.Instance.UpdateCarOrderNumberUI(orden);
+            print("mi puesto es: " + orden);
+            print(ID);
+        }
+    }
 
     #region Input
 

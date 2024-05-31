@@ -5,74 +5,75 @@ using UnityEngine;
 
 public class Chronometer : MonoBehaviour
 {
-    private float elapsedTime = 0f;
-    private bool isRunning = true;
+    //Clase creada para apuntar el tiempo de cada coche
+    private float elapsedTime = 0f; 
+    private bool isRunning = true; //Booleano para poder parar el cronometro cuando sea necesario
     private TextMeshProUGUI chronometerText;
 
+    //Elementos en la IU privados
     [Header("Lap Elements")]
-    [SerializeField] private GameObject _lapTimesBackground;
+    [SerializeField] private GameObject _lapTimesBackground; 
     [SerializeField] private TextMeshProUGUI _lapTime1;
     [SerializeField] private TextMeshProUGUI _lapTime2;
     [SerializeField] private TextMeshProUGUI _lapTime3;
+    
+    //ESTO QUE ES PABLO ELEFANTE
     public string[] _stringLapTimes = new string[3];
-    private TextMeshProUGUI[] _TMPLapTimes = new TextMeshProUGUI[3];
+
+    private TextMeshProUGUI[] _TMPLapTimes = new TextMeshProUGUI[3]; 
 
     void Start()
     {
+        //Inicializamos el array con las variables "TextMeshProUGUI" serializadas
         _TMPLapTimes[0] = _lapTime1;
         _TMPLapTimes[1] = _lapTime2;
         _TMPLapTimes[2] = _lapTime3;
 
         chronometerText = GetComponent<TextMeshProUGUI>();
-        ResetChronometer();
+        ResetChronometer(); 
     }
 
-    void Update()
+    void Update() //Metodo que modifica el cronometro con el paso del tiempo
     {
-        if (isRunning)
+        if (isRunning) 
         {
             elapsedTime += Time.deltaTime;
-            UpdateChronometerUI();
+            UpdateChronometerUI(); //Actualiza la UI
         }
     }
 
-    private void ResetChronometer()
+    private void ResetChronometer() //Resetear el cronometro
     {
         elapsedTime = 0f;
         UpdateChronometerUI();
     }
 
-    public void StartChronometer()
+    public void StartChronometer() //Iniciar el cronometro
     {
         isRunning = true;
     }
 
-    public void StopChronometer()
+    public void StopChronometer() //Parar el cronometro
     {
         isRunning = false;
     }
 
-    public void UpdateLapTime(int lapNumber)
+    public void UpdateLapTime(int lapNumber) //Actualizar el tiempo al dar la vuelta
     {
-        print("entro a updateLapTime");
-        //print("LapTime antes" + _stringLapTimes[lapNumber]);
+        //Comprueba si el gameobject está activo, si es false se activa
         if (!_lapTimesBackground.activeSelf) _lapTimesBackground.SetActive(true);
-        //_stringLapTimes[lapNumber] = chronometerText.text;
-        //print("LapTime después" + _stringLapTimes[lapNumber]);
-        //print("Chronometer " + chronometerText.text);
-        //_TMPLapTimes[lapNumber].SetText(_stringLapTimes[lapNumber]);
-        //_TMPLapTimes[lapNumber].gameObject.SetActive(true);
 
         // Capturar el tiempo actual del cronómetro
         string currentTime = GetFormattedTime(elapsedTime);
 
+        
         _stringLapTimes[lapNumber] = currentTime;
         _TMPLapTimes[lapNumber].SetText(currentTime);
         _TMPLapTimes[lapNumber].gameObject.SetActive(true);
-        Debug.Log($"Lap {lapNumber} time captured: {currentTime}");
+        Debug.Log($"Lap {lapNumber} time captured: {currentTime}"); //Muestra la vuelta y el tiempo en el que se ha dado esta
     }
 
-    private void UpdateChronometerUI()
+    private void UpdateChronometerUI() //Actualiza el cronometro en la IU
     {
         string formattedTime = GetFormattedTime(elapsedTime);
         chronometerText.text = formattedTime;
@@ -84,6 +85,6 @@ public class Chronometer : MonoBehaviour
         int seconds = Mathf.FloorToInt(time % 60F);
         int milliseconds = Mathf.FloorToInt((time * 100F) % 100F);
 
-        return string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
+        return string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds); //Formato del cronometro
     }
 }

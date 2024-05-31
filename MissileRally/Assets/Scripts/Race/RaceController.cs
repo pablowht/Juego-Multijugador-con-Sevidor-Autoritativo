@@ -1,35 +1,40 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
-public class RaceController : MonoBehaviour
+public class RaceController : NetworkBehaviour
 {
     public int numPlayers;
 
-    public readonly List<Player> _players = new(4);
+    public List<Player> _players = new(6);
     private CircuitController _circuitController;
-    private GameObject[] _debuggingSpheres;
+    //private GameObject[] _debuggingSpheres;
 
     private void Start()
     {
         if (_circuitController == null) _circuitController = GetComponent<CircuitController>();
 
-        _debuggingSpheres = new GameObject[GameManager.Instance.numPlayers];
-        for (int i = 0; i < GameManager.Instance.numPlayers; ++i)
-        {
-            _debuggingSpheres[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            _debuggingSpheres[i].GetComponent<SphereCollider>().enabled = false;
-        }
+        //_debuggingSpheres = new GameObject[GameManager.Instance.numPlayers];
+        //for (int i = 0; i < GameManager.Instance.numPlayers; ++i)
+        //{
+        //    _debuggingSpheres[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        //    _debuggingSpheres[i].GetComponent<SphereCollider>().enabled = false;
+        //}
     }
 
     private void Update()
     {
         if (_players.Count == 0)
             return;
-
-        UpdateRaceProgress();
+        print("Count: " + _players.Count);
+        
+        if(IsServer){
+            UpdateRaceProgress();
+        }
     }
 
-    //CONEJO: Me da a mi que aqui hay que tener una variable network para que todos los jugadores sepan que jugadores están conectados a la carrera
     public void AddPlayer(Player player)
     {
         _players.Add(player);
@@ -46,7 +51,10 @@ public class RaceController : MonoBehaviour
 
         public override int Compare(Player x, Player y)
         {
-            if (_arcLengths[x.ID] < _arcLengths[y.ID])
+            //print("x ID: "+x.ID);
+            //print("y ID: "+y.ID);
+
+            if (x.distancia < y.distancia)
                 return 1;
             else return -1;
         }
@@ -60,17 +68,26 @@ public class RaceController : MonoBehaviour
         for (int i = 0; i < _players.Count; ++i)
         {
             arcLengths[i] = ComputeCarArcLength(i);
+            _players[i].distancia = ComputeCarArcLength(i);
+            //_players[i].distancia = ComputeCarArcLength(i);
+
+            //print(arcLengths[i]);
         }
 
-        _players.Sort(new PlayerInfoComparer(arcLengths));
+        //Array.Sort(arcLengths);
+        //_players.Sort(new PlayerInfoComparer(arcLengths)); //******
+        _players.Sort(new PlayerInfoComparer(arcLengths)); //******
+        
 
-        string myRaceOrder = "";
+        //string myRaceOrder = "";
+        int raceCount = 0;
         foreach (var player in _players)
         {
-            myRaceOrder += player.Name + " ";
+            raceCount++;
+            player.orderRaceClientRpc(raceCount);
+            // myRaceOrder += player.ID + " ";
         }
-
-        Debug.Log("Race order: " + myRaceOrder);
+        // Debug.Log("Race order: " + myRaceOrder);
     }
 
     float ComputeCarArcLength(int id)
@@ -84,18 +101,22 @@ public class RaceController : MonoBehaviour
         float minArcL =
             this._circuitController.ComputeClosestPointArcLength(carPos, out _, out var carProj, out _);
 
-        this._debuggingSpheres[id].transform.position = carProj;
+        //this._debuggingSpheres[id].transform.position = carProj;
 
         if (this._players[id].CurrentLap == 0)
         {
             minArcL -= _circuitController.CircuitLength;
+            
         }
         else
         {
             minArcL += _circuitController.CircuitLength *
-                       (_players[id].CurrentLap - 1);
+                       (_players[id].CurrentLap);
+            print("current lap else: "+_players[id].CurrentLap);
         }
 
         return minArcL;
     }
+
+    
 }

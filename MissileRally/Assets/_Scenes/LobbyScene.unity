@@ -258,14 +258,6 @@ MonoBehaviour:
   ntGameInfo: {fileID: 0}
   carsReadyToRace: 0
   nombrePlayer: 
-  mapaNumero:
-    m_InternalValue: 0
-  mapaNumeroLocal: 0
-  mapasNombre:
-  - NascarScene
-  - RainyScene
-  - OasisScene
-  - OwlPlainsScene
   coloresMaterial:
   - {fileID: 2100000, guid: 131f39b87c047074e88b8ec631b11834, type: 2}
   - {fileID: 2100000, guid: 9aab0f76ebe378f42b2b4828aab1cd98, type: 2}
@@ -586,13 +578,13 @@ MonoBehaviour:
       - m_Target: {fileID: 649977164}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: StartHostButton
-        m_Mode: 3
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 0
+          m_StringArgument: NascarScene
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &98240910
@@ -951,13 +943,13 @@ MonoBehaviour:
       - m_Target: {fileID: 649977164}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: StartHostButton
-        m_Mode: 3
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 3
           m_FloatArgument: 0
-          m_StringArgument: 3
+          m_StringArgument: OwlPlainsScene
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &215377468
@@ -1597,13 +1589,13 @@ MonoBehaviour:
       - m_Target: {fileID: 649977164}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: StartHostButton
-        m_Mode: 3
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 2
           m_FloatArgument: 0
-          m_StringArgument: 2
+          m_StringArgument: OasisScene
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &581661424
@@ -1879,6 +1871,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _raceCodeUI: {fileID: 0}
   _rankingUI: {fileID: 0}
+  _restartButton: {fileID: 0}
+  _exitButton: {fileID: 0}
+  _cenitalCamera: {fileID: 0}
   _playerList: []
   _speedometer: {fileID: 0}
   _speedometerNeedle: {fileID: 0}
@@ -2186,13 +2181,13 @@ MonoBehaviour:
       - m_Target: {fileID: 649977164}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: StartHostButton
-        m_Mode: 3
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 1
           m_FloatArgument: 0
-          m_StringArgument: 1
+          m_StringArgument: RainyScene
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &844794436

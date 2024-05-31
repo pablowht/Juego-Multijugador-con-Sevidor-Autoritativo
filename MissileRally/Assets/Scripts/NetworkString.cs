@@ -1,6 +1,7 @@
 using Unity.Collections;
 using Unity.Netcode;
 
+//https://youtu.be/rFCFMkzFaog?list=PLQMQNmwN3FvyyeI1-bDcBPmZiSaDMbFTi
 public struct NetworkString : INetworkSerializable
 {
     private FixedString32Bytes info;

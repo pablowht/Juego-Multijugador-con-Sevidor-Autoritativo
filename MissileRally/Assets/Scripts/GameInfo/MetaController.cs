@@ -6,95 +6,57 @@ using UnityEngine;
 
 public class MetaController : MonoBehaviour
 {
-    public int lapCount = 0;
+    //public int lapCount;
     public int maxLaps = 3; //ELEFANTE cambiar a 3
+
 
     private void OnTriggerEnter(Collider other)
     {
-        //if(collision.gameObject.layer == 8)         metaCrossedClientRpc();
-        //metaCrossedClientRpc();
-        print(other == GameManager.Instance.actualPlayer.car.GetComponent<BoxCollider>());
-        print(GameManager.Instance.actualPlayer.ID);
-        if (other == GameManager.Instance.actualPlayer.car.GetComponent<BoxCollider>())    //ELEFANTE: si se llama al del network game manager NO FUNCIONA, si se hace aqui si, no se
+        //si el coche colisiona con la meta 
+        if (other == GameManager.Instance.actualPlayer.car.GetComponent<BoxCollider>())  
         {
             //GameManager.Instance.ntGameInfo.restorePositionServerRpc(GameManager.Instance.actualPlayer.ID);
             print("Entro al trigger");
-            if (lapCount < maxLaps - 1) //ELEFANTE: tiene qeu ser -1 jeje, empieza en 0
+            //por cada vuelta que da el coche se hace el if
+            if (GameManager.Instance.actualPlayer.CurrentLap < maxLaps - 1) //ELEFANTE: tiene qeu ser -1 jeje, empieza en 0
             {
-                print("lapCount: " + lapCount + " < maxLaps");
+                print("lapCount: " + GameManager.Instance.actualPlayer.CurrentLap + " < maxLaps");
                 print("count " + GameManager.Instance.actualPlayer.count);
                 print("len: " + GameManager.Instance.ntGameInfo.checkpoints.Length);
+                //si en la vuelta el coche ha pasado por todos los checkpoints, entra en el if
                 if (GameManager.Instance.actualPlayer.count == GameManager.Instance.ntGameInfo.checkpoints.Length)
                 {
-                    //print("Checkpoints visitados - 1: " + (GameManager.Instance.actualPlayer.count - 1) + " = " + GameManager.Instance.ntGameInfo.checkpoints.Length);
-                    GameManager.Instance._chronometer.UpdateLapTime(lapCount);
-                    resetArray();
+                   
+                    GameManager.Instance._chronometer.UpdateLapTime(GameManager.Instance.actualPlayer.CurrentLap); //actualiza el tiempo dado en esa vuelta
+                    resetArray();// resetea los chekpoints visitados y los pone a 0
                     GameManager.Instance.actualPlayer.count = 0; //porque cuando pasas por la meta acaba de pasar por un checkpoint
                     //GameManager.Instance.actualPlayer.count = 1; //porque cuando pasas por la meta acaba de pasar por un checkpoint
-                    lapCount++;
+                    GameManager.Instance.actualPlayer.CurrentLap++;
                 }
             }
-            else
+            else//cuando haya hecho todas las vueltas
             {
-                print("acabó");
+             
                 //ELEFANTE:
                 /*
                  - en la misma escena: se bloquea el player input de los jugadores y se pone encima la UI
                  - en otra escena: se llama a un serverRPC que cambie la escena (no se si habría que quitar el input igualmente)
                  */
-                UIManager.Instance._semaphore.UpdateToRed();
-                GameManager.Instance._chronometer.UpdateLapTime(maxLaps - 1);
-                GameManager.Instance._chronometer.StopChronometer();
+                UIManager.Instance._semaphore.UpdateToRed();//pone el semaforo a rojo
+                GameManager.Instance._chronometer.UpdateLapTime(maxLaps - 1);//actualiza el tiempo de la ultima vuelta
+                GameManager.Instance._chronometer.StopChronometer();// para el cronometro
 
-                UIManager.Instance.OpenRanking();
+                UIManager.Instance.OpenRanking();//aparece en la pantalla el ranking 
+                //actualiza la UI del ranking y los jugadores que han terminado 
+                GameManager.Instance.ntGameInfo.RaceFinishServerRpc(GameManager.Instance.actualPlayer.Name, UIManager.Instance._chronometer.GetComponent<Chronometer>()._stringLapTimes[2].ToString());
             }
         }
     }
-
-
-    //[ClientRpc]
-    //public void metaCrossedClientRpc()
-    //{
-    //    if (IsOwner)// & other == GameManager.Instance.actualPlayer.car.GetComponent<BoxCollider>())    //ELEFANTE: si se llama al del network game manager NO FUNCIONA, si se hace aqui si, no se
-    //    {
-    //        //GameManager.Instance.ntGameInfo.restorePositionServerRpc(GameManager.Instance.actualPlayer.ID);
-    //        print("Entro al trigger");
-    //        if (lapCount < maxLaps - 1) //ELEFANTE: tiene qeu ser -1 jeje, empieza en 0
-    //        {
-    //            print("lapCount: " + lapCount + " < maxLaps");
-    //            print("count " + GameManager.Instance.actualPlayer.count);
-    //            print("len: " + GameManager.Instance.ntGameInfo.checkpoints.Length);
-    //            if (GameManager.Instance.actualPlayer.count == GameManager.Instance.ntGameInfo.checkpoints.Length)
-    //            {
-    //                //print("Checkpoints visitados - 1: " + (GameManager.Instance.actualPlayer.count - 1) + " = " + GameManager.Instance.ntGameInfo.checkpoints.Length);
-    //                GameManager.Instance._chronometer.UpdateLapTime(lapCount);
-    //                resetArray();
-    //                GameManager.Instance.actualPlayer.count = 0; //porque cuando pasas por la meta acaba de pasar por un checkpoint
-    //                //GameManager.Instance.actualPlayer.count = 1; //porque cuando pasas por la meta acaba de pasar por un checkpoint
-    //                lapCount++;
-    //            }
-    //        }
-    //        else
-    //        {
-    //            print("acabó");
-    //            //ELEFANTE:
-    //            /*
-    //             - en la misma escena: se bloquea el player input de los jugadores y se pone encima la UI
-    //             - en otra escena: se llama a un serverRPC que cambie la escena (no se si habría que quitar el input igualmente)
-    //             */
-    //            UIManager.Instance._semaphore.UpdateToRed();
-    //            GameManager.Instance._chronometer.UpdateLapTime(maxLaps - 1);
-    //            GameManager.Instance._chronometer.StopChronometer();
-    //        }
-    //    }
-    //}
-
-    void resetArray()
+    void resetArray()//resetea el aray de checkpoints visitados 
     {
         for(int i = 0; i < GameManager.Instance.ntGameInfo.checkpoints.Length; i++)
         {
             GameManager.Instance.actualPlayer.visitedCheckpoint[i] = false;
-            print("seteo");
         }
     }
 }

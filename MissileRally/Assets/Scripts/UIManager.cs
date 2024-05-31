@@ -1,17 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    //private TMP_InputField _playerNameInput;
     public TextMeshProUGUI _raceCodeUI;
-    private TextMeshProUGUI _userData;
 
     public static UIManager Instance { get; private set; }
 
@@ -28,50 +23,6 @@ public class UIManager : MonoBehaviour
 
     }
 
-    //private void Start()
-    //{
-    //_ui_Lobby = GameObject.FindGameObjectWithTag("UI_Lobby");
-    //foreach (Transform child in _ui_Lobby.transform)
-    //{
-    //    if (child.tag == "RaceCode") _raceCodeInput = child.GetComponent<TMP_InputField>();
-    //}
-
-    //_ui_GameInfo = GameObject.FindGameObjectWithTag("UI_GameInfo");
-    //foreach (Transform child in _ui_GameInfo.transform)
-    //{
-    //    if (child.tag == "RaceCode") _raceCodeUI = child.GetComponent<TextMeshProUGUI>();
-    //    if (child.tag == "UserData") _userData = child.GetComponent<TextMeshProUGUI>();
-    //}
-
-    //_ui_Lobby.SetActive(true);
-    //_ui_GameInfo.SetActive(false);
-    //}
-
-    //void OnGUI()
-    //{
-    //if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
-    //{
-    //    LobbyControlUI();
-    //}
-    //else
-    //{
-    //    StatusLabels();
-    //}
-    //}
-
-    //private void LobbyControlUI()
-    //{
-    //    _ui_Lobby.SetActive(true);
-    //    //RelayManager.Instance.joinCode = _raceCodeInput.ToString();
-    //    //_raceCodeUI.SetText(RelayManager.Instance.joinCode);
-    //}
-
-    //private void FixedUpdate()
-    //{
-    //    //Crear un script aparte para el speedometer que active el gameobject al empezar la carrera y por tanto empiece su fixedupdate
-    //    //if (carRaceOn) { updateSpeedometer(); }
-    //}
-
     #region Ranking
 
     [Header("Ranking")]
@@ -80,20 +31,30 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject _exitButton;
     [SerializeField] private GameObject _cenitalCamera;
     [SerializeField] private TextMeshProUGUI[] _playerList;
+    public string rankingText;
 
     public void OpenRanking()
     {
         _rankingUI.SetActive(true);
-        WritePlayerInRanking(0);
+        //WritePlayerInRanking(orderPlayer);
         _speedometer.SetActive(false);
         GameManager.Instance.actualPlayer.DisablePlayerInput();
         GameManager.Instance.actualPlayer.car.SetActive(false);
+        GameManager.Instance.actualPlayer.car.GetComponent<BoxCollider>().enabled = false;
+
         _cenitalCamera.SetActive(true);
     }
 
-    public void WritePlayerInRanking(int orderPlayer)
+    public string RankingTextInRanking(int orderPlayer, string playerName, string tempo)
     {
-        _playerList[orderPlayer].SetText(string.Format("{0}. {1, -20} {2}", orderPlayer+1, GameManager.Instance.actualPlayer.Name, _chronometer.GetComponent<Chronometer>()._stringLapTimes[2].ToString()));
+        rankingText = string.Format("{0}. {1, -20} {2}", orderPlayer + 1, playerName, tempo);
+        return rankingText;
+    }
+
+    public void WriteRankingUI(int orderPlayer, string text)
+    {
+        _playerList[orderPlayer].SetText(text);
+        print("Cliente estás ashí");
     }
 
     public void RestartLevel()
@@ -105,6 +66,17 @@ public class UIManager : MonoBehaviour
     public void ExitApplication()
     {
         Application.Quit();
+    }
+
+    #endregion
+
+    #region Race Order
+    [Header("Race Order UI")]
+    [SerializeField] private TextMeshProUGUI _numberCarPosition;
+
+    public void UpdateCarOrderNumberUI(int position)
+    {
+        _numberCarPosition.SetText(position.ToString());
     }
 
     #endregion
@@ -137,7 +109,6 @@ public class UIManager : MonoBehaviour
         needlePosition = startNeedlePosition - endNeedlePosition;
         float temp = vehicleSpeed / 60;
         _speedometerNeedle.transform.eulerAngles = new Vector3 (0, 0, (startNeedlePosition - temp * needlePosition));
-        print("sale");
     }
 
     //private bool carRaceOn = false;
@@ -168,30 +139,15 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region Network Buttons
-    private void StatusLabels()
+
+    public void StartHostButton(string mapName)
     {
-        //_ui_Lobby.SetActive(false);
-        //_ui_GameInfo.SetActive(true);
-
-        var mode = NetworkManager.Singleton.IsHost ?
-            "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
-
-        _userData.SetText(mode + " : PlayerID");
+        StartHostSequence(mapName);
     }
-
-    public void StartHostButton(int mapNumber)
+    private async void StartHostSequence(string mapName)
     {
-        GameManager.Instance.mapScene = GameManager.Instance.mapasNombre[mapNumber];
-        StartHostSequence(mapNumber, GameManager.Instance.mapScene);
-    }
-    private async void StartHostSequence(int mapNumber, string mapSceneName)
-    {
-        SceneManager.LoadSceneAsync(mapSceneName);
+        SceneManager.LoadSceneAsync(mapName);
         await RelayManager.Instance.StartHost();
-        GameManager.Instance.SetMapSelected(mapNumber);
-
-        //GameManager.Instance.ConnectToRace();
-        //_raceCodeUI.SetText(RelayManager.Instance.joinCode);
     }
     private async void StartClientButton()
     {
@@ -200,16 +156,7 @@ public class UIManager : MonoBehaviour
 
     public void SetRaceCode()
     {
-        //DUDA 1
-
-        //StartClientButton();
-        //ELEFANTE
-        //GameManager.Instance.mapScene = GameManager.Instance.mapSelected.Value.ToString();
-        //SceneManager.LoadSceneAsync(GameManager.Instance.mapasNombre[GameManager.Instance.mapaNumero.Value]);
-        //GameManager.Instance.ConnectToRace();
         StartClientButton();
-        //RelayManager.Instance.joinCode = _raceCodeInput.ToString();
-
     }
 
     public void SetVisibleRaceInput()

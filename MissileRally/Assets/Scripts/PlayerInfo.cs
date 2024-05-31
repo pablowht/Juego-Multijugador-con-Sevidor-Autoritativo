@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -8,5 +9,4 @@ public class PlayerInfo
     public string playerName;
     public int playerId;
     public int playerCar;
-    //public float playerSpeed;
 }

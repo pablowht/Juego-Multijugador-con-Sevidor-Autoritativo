@@ -223,33 +223,52 @@ public class CarController : NetworkBehaviour
         //GameManager.Instance.ntGameInfo.collisionOccurredClientRpc();
         if(collision.gameObject.layer != 8) //con el resto de jugadores se puede chocar pero no se respawnea
         {
+            print("colisión");
+            print(GameManager.Instance.actualPlayer.ID);
+            // if(GameManager.Instance.actualPlayer.ID == 0){
+            //     GameManager.Instance.ntGameInfo.restorePositionServerRpc(0);
+            //     print("es host");                
+            // } 
+            // else
+            // { 
+            //     print("quien soy?...cliente");
+            //     print(GameManager.Instance.actualPlayer.ID);                
+            //     collisionOccurredClientRpc();
+            // }
             collisionOccurredClientRpc();
+
+
         }
-        else
-        {
-            //es un player -> se le baja la velocidad AL QUE SE HA CHOCADO
-            collisionWithPlayerClientRpc();
-        }
+        // else
+        // {
+        //     print("colision coche");
+        //     //es un player -> se le baja la velocidad AL QUE SE HA CHOCADO
+        //     collisionWithPlayerClientRpc();
+        // }
         //si es el player se les podría bajar la velocidad
     }
 
     [ClientRpc]
     public void collisionOccurredClientRpc()
     {
+        //print("fuera"+GameManager.Instance.actualPlayer.ID);
+
         if (IsOwner)    //ELEFANTE: si se llama al del network game manager NO FUNCIONA, si se hace aqui si, no se
         {
+            print("es owner");
+            print("dentro"+GameManager.Instance.actualPlayer.ID);
             GameManager.Instance.ntGameInfo.restorePositionServerRpc(GameManager.Instance.actualPlayer.ID);
         }
     }
 
-    [ClientRpc]
-    public void collisionWithPlayerClientRpc()
-    {
-        if (IsOwner)    //ELEFANTE: si se llama al del network game manager NO FUNCIONA, si se hace aqui si, no se
-        {
-            GameManager.Instance.ntGameInfo.reduceVelocityServerRpc(GameManager.Instance.actualPlayer.ID);
-        }
-    }
+    // [ClientRpc]
+    // public void collisionWithPlayerClientRpc()
+    // {
+    //     if (IsOwner)    //ELEFANTE: si se llama al del network game manager NO FUNCIONA, si se hace aqui si, no se
+    //     {
+    //         GameManager.Instance.ntGameInfo.reduceVelocityServerRpc(GameManager.Instance.actualPlayer.ID);
+    //     }
+    // }
 
     #endregion
 }

@@ -37,8 +37,31 @@ public class NetworkGameManager : NetworkBehaviour
         print("rpc");
         code = c;
         print(code);
-    }    
-    
+    }
+
+    private string[] rankingList = new string[6];
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RaceFinishServerRpc(string playerName, string tiempoCarrera)
+    {
+        //Escribe el jugador en la UI de ranking 
+        rankingList[GameManager.Instance.finishedPlayers] = UIManager.Instance.RankingTextInRanking(GameManager.Instance.finishedPlayers, playerName, tiempoCarrera);
+        GameManager.Instance.finishedPlayers++;// aumenta el numero de jugadores que han terminado 
+        int i = 0;
+        foreach (string rankingPos in rankingList)
+        {
+            RaceFinishClientRpc(i, rankingPos);
+            i++;
+        }
+        
+    }
+
+    [ClientRpc]
+    public void RaceFinishClientRpc(int i, string rankingPos)
+    {
+        UIManager.Instance.WriteRankingUI(i, rankingPos);
+    }
+
     [ClientRpc]
     public void sendCodeClientRpc(string r)
     {
@@ -106,6 +129,7 @@ public class NetworkGameManager : NetworkBehaviour
         {
             serverCountCar--;
         }
+
         UpdateUIClientRpc(serverCountCar);
     }
     #endregion
@@ -119,7 +143,7 @@ public class NetworkGameManager : NetworkBehaviour
         print("ultimo" + last);
         print("id" + clientID);
         //if(last != carsCheckpoints[clientID] - 1 || (last != checkpoints.Length-1 & carsCheckpoints[clientID] != 0))
-        if (last != carsCheckpoints[clientID] - 1)
+        if (last != carsCheckpoints[clientID] - 1)//
         {
             carsCheckpoints[clientID] = last;
         }

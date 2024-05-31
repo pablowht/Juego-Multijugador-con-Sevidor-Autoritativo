@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 public class RelayManager : MonoBehaviour
 {
-    const int maxConnections = 50;
+    const int maxConnections = 2;
 
     //public string joinCode = "Código...";
 

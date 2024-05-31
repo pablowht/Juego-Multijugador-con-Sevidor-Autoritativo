@@ -8,7 +8,7 @@ public class CircuitController : MonoBehaviour
     private float[] _cumArcLength;
     private float _totalLength;
 
-    public List<Transform> _playersPositions;
+    public List<Transform> _playersPositions; //Lista con la posicion de los jugadores
 
     public float CircuitLength
     {
@@ -17,9 +17,7 @@ public class CircuitController : MonoBehaviour
 
     void Start()
     {
-        _circuitPath = GetComponentInChildren<LineRenderer>();
-
-        //getPlayerPositions();
+        _circuitPath = GetComponentInChildren<LineRenderer>(); //Buscamos el camino creado con el objeto "LineRenderer"
 
         int numPoints = _circuitPath.positionCount;
         _pathPos = new Vector3[numPoints];
@@ -99,17 +97,4 @@ public class CircuitController : MonoBehaviour
 
         return minArcL;
     }
-
-    //private void getPlayerPositions()
-    //{
-    //    Transform[] childTransforms = GetComponentsInChildren<Transform>();
-
-    //    foreach (Transform child in childTransforms)
-    //    {
-    //        if (child.tag == "RaceStartingPos")
-    //        {
-    //            _playersPositions.Add(child);
-    //        }
-    //    }
-    //}
 }
