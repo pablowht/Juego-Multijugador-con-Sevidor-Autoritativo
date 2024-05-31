@@ -25,6 +25,7 @@ public class Player : NetworkBehaviour
     public bool[] visitedCheckpoint = new bool[20];
     public int count = 0;
     public int rankPosition = 0;
+    public float coefRed = 1;
 
     // información color
     NetworkVariable<int> networkColorIdx = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
@@ -42,13 +43,6 @@ public class Player : NetworkBehaviour
         carController = car.GetComponent<CarController>();
         networkColorIdx.OnValueChanged += OnSetColor;
     }
-
-    //private void updatePlayerSpeed(float newVal)
-    //{
-    //    GameManager.Instance.actualPlayerInfo.playerSpeed = newVal; //para el servidor
-    //    //GameManager.Instance.ntGameInfo.updateSpeedClientRpc(newVal); //para los clientes
-    //}
-
 
     #region Network
 
@@ -80,6 +74,7 @@ public class Player : NetworkBehaviour
         {
             print("jugador añadido");
             GameManager.Instance.ntGameInfo.currentPlayerInstance.Add(this);
+            GameManager.Instance.ntGameInfo.sendCodeClientRpc(GameManager.Instance.ntGameInfo.code);
         }
     }
 
@@ -98,17 +93,8 @@ public class Player : NetworkBehaviour
         }
     }
 
-    public void EnablePlayerInput()
-    {
-        if (IsOwner)
-        {
-            GetComponent<PlayerInput>().enabled = true;
-        }
-    }
-
     void OnSetColor(int previous, int newM)
     {
-        //Material body = car.transform.GetChild(0).GetComponent<MeshRenderer>().materials[1];
         MeshRenderer body = car.transform.GetChild(0).GetComponent<MeshRenderer>();
         Material[] mat = body.materials;
         print("material: " + newM);
@@ -118,6 +104,14 @@ public class Player : NetworkBehaviour
          por lo que hay que reflejar los cambios*/
     }
 
+    public void EnablePlayerInput()
+    {
+        if (IsOwner)
+        {
+            GetComponent<PlayerInput>().enabled = true;
+        }
+    }
+
     void SetupCamera()
     {
         _vPlayerCamera = GameManager.Instance.virtualCamera;
@@ -125,8 +119,6 @@ public class Player : NetworkBehaviour
         _vPlayerCamera.Follow = car.GetComponent<Transform>();
         _vPlayerCamera.LookAt = car.GetComponent<Transform>();
     }
-
-
     #endregion
 
     #region Input
@@ -150,8 +142,9 @@ public class Player : NetworkBehaviour
     [ServerRpc]
     public void OnMoveServerRpc(Vector2 input)
     {
-        carController.InputAcceleration = input.y;
-        carController.InputSteering = input.x;
+        //COMENTAR - ELEFANTE: no es buena idea reducirlo aqui, no se reduce
+        carController.InputAcceleration = input.y * coefRed;
+        carController.InputSteering = input.x * coefRed;
     }
     [ServerRpc]
     public void OnAttackServerRpc()

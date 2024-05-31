@@ -88,6 +88,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] public GameObject _semaphoreCamera;
     [SerializeField] public SemaphoreController _semaphore;
 
+
+
     public void updateSpeedometer()
     {
         //print(GameManager.Instance.actualPlayerInfo.playerSpeed);
@@ -198,6 +200,9 @@ public class UIManager : MonoBehaviour
     
     [Header("Lobby - Map Selection")]
     [SerializeField] private GameObject _mapSelectionUI;
+
+    public string joinCode = "Código...";
+
 
     public void SetPlayerName()
     {

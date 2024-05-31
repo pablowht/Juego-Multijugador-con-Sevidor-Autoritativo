@@ -214,21 +214,23 @@ public class CarController : NetworkBehaviour
     #endregion
 
 
-    #region colisiones
+    #region colisionesRPC
     public void OnCollisionEnter(Collision collision)
     {
         //ELEFANTE GRANDE TRISTE: solo detecta la colisión el host, también detecta la del resto de clientes
         //pero un cliente no detecta que EL ha tenido colisión, y cuando detecta el host que hay colisión
         //su Id es el del actualPlayer QUE NO ES EL CORRECTO
-        //print("colision");
-        //if (IsOwner)
-        //{
-        //    print("id coliison: " + GameManager.Instance.actualPlayer.ID);
-        //    GameManager.Instance.ntGameInfo.restorePositionServerRpc(GameManager.Instance.actualPlayer.ID);
-        //}
-        print("colision");
         //GameManager.Instance.ntGameInfo.collisionOccurredClientRpc();
-        collisionOccurredClientRpc();
+        if(collision.gameObject.layer != 8) //con el resto de jugadores se puede chocar pero no se respawnea
+        {
+            collisionOccurredClientRpc();
+        }
+        else
+        {
+            //es un player -> se le baja la velocidad AL QUE SE HA CHOCADO
+            collisionWithPlayerClientRpc();
+        }
+        //si es el player se les podría bajar la velocidad
     }
 
     [ClientRpc]
@@ -240,6 +242,14 @@ public class CarController : NetworkBehaviour
         }
     }
 
+    [ClientRpc]
+    public void collisionWithPlayerClientRpc()
+    {
+        if (IsOwner)    //ELEFANTE: si se llama al del network game manager NO FUNCIONA, si se hace aqui si, no se
+        {
+            GameManager.Instance.ntGameInfo.reduceVelocityServerRpc(GameManager.Instance.actualPlayer.ID);
+        }
+    }
 
     #endregion
 }

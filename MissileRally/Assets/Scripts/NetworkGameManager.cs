@@ -7,9 +7,10 @@ using UnityEngine.Windows;
 public class NetworkGameManager : NetworkBehaviour
 {
     private int serverCountCar = 0;
-    private int[] carsCheckpoints = new int[4]; 
+    private int[] carsCheckpoints = new int[4];
     public CheckPoint[] checkpoints;
     public List<Player> currentPlayerInstance = new List<Player>();
+    public string code;
     //ELEFANTE: no es la solución más eficiente sobre todo en cuanto a escalabilidad
 
     #region Ready Button and input activate
@@ -17,53 +18,64 @@ public class NetworkGameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void IncrementCarReadyServerRpc()
     {
-        //Debug.Log($"Before Increment: {GameManager.Instance.carsReadyToRace}");
-        //GameManager.Instance.carsReadyToRace += 1;
-        //Debug.Log($"After Increment: {GameManager.Instance.carsReadyToRace}");
         Debug.Log($"Before Increment: {serverCountCar}");
         serverCountCar += 1;
         Debug.Log($"After Increment: {serverCountCar}");
 
         UpdateUIClientRpc(serverCountCar);
 
-        if (serverCountCar >= 2)
+        if (serverCountCar >= 1)
         {
-            //CORRUTINA QUE ESPERE X SEGUNDOS DEL SEMÁFORO
             GameManager.Instance.BeginRace();
             BeginRaceClientRpc();
-            //GameManager.Instance.EnablePlayerInputs();
-            //activateInputClientRpc();
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void setJoinCodeServerRpc(string c)
+    {
+        print("rpc");
+        code = c;
+        print(code);
+    }    
+    
+    [ClientRpc]
+    public void sendCodeClientRpc(string r)
+    {
+        UIManager.Instance.joinCode = r;
+        UIManager.Instance._raceCodeUI.SetText(r);
     }
 
     [ClientRpc]
     public void BeginRaceClientRpc()
     {
-        UIManager.Instance._waitingPlayersText.SetText("Race Starting...");
-        StartCoroutine(UpdateSemaphoreOrange());
+        //UIManager.Instance._waitingPlayersText.SetText("Race Starting...");
+        GameManager.Instance.BeginRace();
+        //GameManager.Instance.StartCoroutine(UpdateSemaphoreOrange());
+        //StartCoroutine(UpdateSemaphoreOrange());
     }
 
-    IEnumerator UpdateSemaphoreOrange()
-    {
-        UIManager.Instance._semaphore.UpdateToRed();
-        yield return new WaitForSeconds(2);
-        UIManager.Instance._semaphore.UpdateToOrange();
-        StartCoroutine(UpdateSemaphoreGreen());
-    }
-    IEnumerator UpdateSemaphoreGreen()
-    {
-        yield return new WaitForSeconds(2);
-        UIManager.Instance._semaphore.UpdateToGreen();
-        activateInputClientRpc();
-        UIManager.Instance.DisableUIToStartRace();
-        StartCoroutine(StopSemaphore());
-    }
+    //IEnumerator UpdateSemaphoreOrange()
+    //{
+    //    UIManager.Instance._semaphore.UpdateToRed();
+    //    yield return new WaitForSeconds(2);
+    //    UIManager.Instance._semaphore.UpdateToOrange();
+    //    StartCoroutine(UpdateSemaphoreGreen());
+    //}
+    //IEnumerator UpdateSemaphoreGreen()
+    //{
+    //    yield return new WaitForSeconds(2);
+    //    UIManager.Instance._semaphore.UpdateToGreen();
+    //    activateInputClientRpc();
+    //    UIManager.Instance.DisableUIToStartRace();
+    //    StartCoroutine(StopSemaphore());
+    //}
 
-    IEnumerator StopSemaphore()
-    {
-        yield return new WaitForSeconds(1);
-        UIManager.Instance._semaphoreCamera.SetActive(false);
-    }
+    //IEnumerator StopSemaphore()
+    //{
+    //    yield return new WaitForSeconds(1);
+    //    UIManager.Instance._semaphoreCamera.SetActive(false);
+    //}
 
     [ClientRpc]
     public void UpdateUIClientRpc(int c)
@@ -77,8 +89,8 @@ public class NetworkGameManager : NetworkBehaviour
     {
         GameManager.Instance.actualPlayer.EnablePlayerInput();
         UIManager.Instance.DisableUIToStartRace();
-    }    
-    
+    }
+
     [ClientRpc(RequireOwnership = false)]
     public void updateSpeedClientRpc(float newVal)
     {
@@ -90,7 +102,7 @@ public class NetworkGameManager : NetworkBehaviour
     [ServerRpc]
     public void removeCarServerRpc()
     {
-        if(serverCountCar > 0)
+        if (serverCountCar > 0)
         {
             serverCountCar--;
         }
@@ -99,14 +111,15 @@ public class NetworkGameManager : NetworkBehaviour
     #endregion
 
     #region checkpoints
+    //ELEFANTE - quitar el cliente de la lista de prefabs cuando se desconecte
 
     [ServerRpc(RequireOwnership = false)]
     public void updateCheckpointServerRpc(int clientID, int last)
     {
-        print("ultimo"+last);
-        print("id"+clientID);
+        print("ultimo" + last);
+        print("id" + clientID);
         //if(last != carsCheckpoints[clientID] - 1 || (last != checkpoints.Length-1 & carsCheckpoints[clientID] != 0))
-        if(last != carsCheckpoints[clientID] - 1)
+        if (last != carsCheckpoints[clientID] - 1)
         {
             carsCheckpoints[clientID] = last;
         }
@@ -123,22 +136,20 @@ public class NetworkGameManager : NetworkBehaviour
         //bucle de instanciarse y xd
 
         print("moviendo...");
-        print("id: "+idx);
-        GameManager.Instance.ntGameInfo.currentPlayerInstance[idx].car.transform.position = checkpoints[carsCheckpoints[idx]].position.position;
-        GameManager.Instance.ntGameInfo.currentPlayerInstance[idx].car.transform.rotation = checkpoints[carsCheckpoints[idx]].position.rotation;
-        GameManager.Instance.ntGameInfo.currentPlayerInstance[idx].carController._rigidbody.velocity = Vector3.zero;
-        GameManager.Instance.ntGameInfo.currentPlayerInstance[idx].carController._rigidbody.angularVelocity = Vector3.zero;
-        //moveClientRpc(idx, checkpoints[carsCheckpoints[idx]].position.rotation, checkpoints[carsCheckpoints[idx]].position.position);
-    }
-
-    [ClientRpc]
-    public void collisionOccurredClientRpc()
+        print("id: " + idx);
+        currentPlayerInstance[idx].car.transform.position = checkpoints[carsCheckpoints[idx]].position.position;
+        currentPlayerInstance[idx].car.transform.rotation = checkpoints[carsCheckpoints[idx]].position.rotation;
+        currentPlayerInstance[idx].carController._rigidbody.velocity = Vector3.zero;
+        currentPlayerInstance[idx].carController._rigidbody.angularVelocity = Vector3.zero;
+    }    
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void reduceVelocityServerRpc(int idx)
     {
-        if (IsOwner)
-        {
-            print(GameManager.Instance.actualPlayer.ID);
-            //restorePositionServerRpc(GameManager.Instance.actualPlayer.ID);
-        }
+        //COMENTAR
+        print("reduciendo...");
+        currentPlayerInstance[idx].coefRed = 0.5f;
+        //si pongo aqui una corrutina no funciona
     }
     #endregion
 }

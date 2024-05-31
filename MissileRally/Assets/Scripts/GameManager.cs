@@ -31,7 +31,6 @@ public class GameManager : MonoBehaviour
 
     //public NetworkVariable<int> carsReadyToRace_ntw = new NetworkVariable<int>(0);
     public int carsReadyToRace = 0;
-
     public static GameManager Instance { get; private set; }
 
     void Awake()
@@ -173,7 +172,6 @@ public class GameManager : MonoBehaviour
             //print(GameObject.FindWithTag("Checkpoint").GetComponent<FindCheckPoints>().points.Length);
 
             //ntGameInfo.initialiceServerRpc();
-            ntGameInfo.checkpoints = GameObject.FindWithTag("Checkpoint").GetComponent<FindCheckPoints>().points;
             //print(ntGameInfo.checkpoints);
             //print(ntGameInfo.checkpoints.Length);
         }
@@ -218,8 +216,9 @@ public class GameManager : MonoBehaviour
         currentCircuit = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<CircuitController>();
         virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
         currentRace = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<RaceController>();
+        ntGameInfo.checkpoints = GameObject.FindWithTag("Checkpoint").GetComponent<FindCheckPoints>().points;
         _chronometer = UIManager.Instance._chronometer.GetComponent<Chronometer>();
-        UIManager.Instance._raceCodeUI.SetText(joinCodeNumber);
+        UIManager.Instance._raceCodeUI.SetText(UIManager.Instance.joinCode);
         prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[0].Prefab;
         //ntGameInfo.initialiceServerRpc();
 

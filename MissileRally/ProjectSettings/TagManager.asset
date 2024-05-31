@@ -19,16 +19,17 @@ TagManager:
   - Semaphore Camera
   - Semaphore Virtual
   - Semaphore
+  - Car
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
   - Smeaphore Camera Layer
   - Main Camera Layer
-  - 
+  - Car
   - 
   - 
   - 

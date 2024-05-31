@@ -12,7 +12,7 @@ public class RelayManager : MonoBehaviour
 {
     const int maxConnections = 50;
 
-    public string joinCode = "Código...";
+    //public string joinCode = "Código...";
 
     public static RelayManager Instance { get; private set; }
 
@@ -38,9 +38,12 @@ public class RelayManager : MonoBehaviour
         }
         Allocation allocation = await RelayService.Instance.CreateAllocationAsync(maxConnections);
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(allocation, "dtls"));
-        joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-        GameManager.Instance.joinCodeNumber = joinCode;
+        string code = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+        //GameManager.Instance.joinCodeNumber = UIManager.Instance.joinCode;
         NetworkManager.Singleton.StartHost();
+        print(code);
+        GameManager.Instance.ntGameInfo.setJoinCodeServerRpc(code);
+        UIManager.Instance._raceCodeUI.SetText(GameManager.Instance.ntGameInfo.code);
     }
 
     async public Task StartClient(string joinCodeInput)
@@ -53,9 +56,9 @@ public class RelayManager : MonoBehaviour
 
         var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode: joinCodeInput);
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
-        print(joinCode);
-        print(joinAllocation);
-        GameManager.Instance.joinCodeNumber = joinCode;
+        //print(UIManager.Instance.joinCode);
+        //print(joinAllocation);
+        //GameManager.Instance.joinCodeNumber = UIManager.Instance.joinCode;
         NetworkManager.Singleton.StartClient();
     }
 }
