@@ -63,7 +63,7 @@ public class CarController : NetworkBehaviour
     {
         if (!IsSpawned) return;
 
-        if (IsServer)
+        if (IsServer) 
         {
             InputSteering = Mathf.Clamp(InputSteering, -1, 1);
             InputAcceleration = Mathf.Clamp(InputAcceleration, -1, 1);
@@ -214,61 +214,28 @@ public class CarController : NetworkBehaviour
     #endregion
 
 
-    #region colisionesRPC
+    #region ColisionesRPC
     public void OnCollisionEnter(Collision collision)
     {
-        //ELEFANTE GRANDE TRISTE: solo detecta la colisión el host, también detecta la del resto de clientes
-        //pero un cliente no detecta que EL ha tenido colisión, y cuando detecta el host que hay colisión
-        //su Id es el del actualPlayer QUE NO ES EL CORRECTO
-        //GameManager.Instance.ntGameInfo.collisionOccurredClientRpc();
-        if(collision.gameObject.layer != 8) //con el resto de jugadores se puede chocar pero no se respawnea
+        //En caso de chocar con otros jugadores, colisiona pero no respawnea
+        if(collision.gameObject.layer != 8)
         {
-            print("colisión");
-            print(GameManager.Instance.actualPlayer.ID);
-            // if(GameManager.Instance.actualPlayer.ID == 0){
-            //     GameManager.Instance.ntGameInfo.restorePositionServerRpc(0);
-            //     print("es host");                
-            // } 
-            // else
-            // { 
-            //     print("quien soy?...cliente");
-            //     print(GameManager.Instance.actualPlayer.ID);                
-            //     collisionOccurredClientRpc();
-            // }
+            //print("Colisión id: " + GameManager.Instance.actualPlayer.ID);
             collisionOccurredClientRpc();
-
-
         }
-        // else
-        // {
-        //     print("colision coche");
-        //     //es un player -> se le baja la velocidad AL QUE SE HA CHOCADO
-        //     collisionWithPlayerClientRpc();
-        // }
-        //si es el player se les podría bajar la velocidad
     }
 
-    [ClientRpc]
-    public void collisionOccurredClientRpc()
+    [ClientRpc] 
+    public void collisionOccurredClientRpc() //le dice al cliente que ha colisionado, si el cliente es owner del coche, le pide al server que le respawnee
     {
-        //print("fuera"+GameManager.Instance.actualPlayer.ID);
-
-        if (IsOwner)    //ELEFANTE: si se llama al del network game manager NO FUNCIONA, si se hace aqui si, no se
+        if (IsOwner)
         {
-            print("es owner");
-            print("dentro"+GameManager.Instance.actualPlayer.ID);
+            //print("Es owner");
+            //print("Dentro id" + GameManager.Instance.actualPlayer.ID);
+            //Respawn
             GameManager.Instance.ntGameInfo.restorePositionServerRpc(GameManager.Instance.actualPlayer.ID);
         }
     }
-
-    // [ClientRpc]
-    // public void collisionWithPlayerClientRpc()
-    // {
-    //     if (IsOwner)    //ELEFANTE: si se llama al del network game manager NO FUNCIONA, si se hace aqui si, no se
-    //     {
-    //         GameManager.Instance.ntGameInfo.reduceVelocityServerRpc(GameManager.Instance.actualPlayer.ID);
-    //     }
-    // }
 
     #endregion
 }

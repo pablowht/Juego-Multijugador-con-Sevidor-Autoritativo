@@ -7,33 +7,34 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    //Maximo número de players que se pueden conectar
     public int numPlayers = 6;
+    //Players Conectados
     public int connectedPlayers = 0;
+    //Players Preparados para comenzar la carrera
+    public int carsReadyToRace = 0;
+    //Players que han acabado la carrera
+    public int finishedPlayers = 0;
 
+    //Referencias de cada circuito
     public RaceController currentRace;
     public CircuitController currentCircuit;
     public Chronometer _chronometer;
 
-    public CinemachineVirtualCamera virtualCamera;
-
+    //Variables para el jugador
     public GameObject prefabPlayer;
-
-    public NetworkManager networkManager;
-
-    public PlayerInfo actualPlayerInfo;
     public Player actualPlayer;
+    public PlayerInfo actualPlayerInfo;
+    public CinemachineVirtualCamera virtualCamera;
+    public Material[] coloresMaterial;
 
-    public string mapScene;
-    public string joinCodeNumber;
-
+    //Referencia al NetworkManager para la suscripción a metodos
+    public NetworkManager networkManager;
+    //Referencia al NetworkGameManager
     public NetworkGameManager ntGameInfo;
 
-    //public NetworkVariable<int> carsReadyToRace_ntw = new NetworkVariable<int>(0);
-    public int carsReadyToRace = 0;
+    // Singleton DontDestroy
     public static GameManager Instance { get; private set; }
-
-    public int finishedPlayers = 0;
-
     void Awake()
     {
         if (Instance == null)
@@ -49,6 +50,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        //Búsqueda de referencias y suscripción a eventos de red
         actualPlayerInfo = new PlayerInfo();
 
         networkManager = NetworkManager.Singleton;
@@ -61,6 +63,7 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        //Desuscripción de eventos de red
         networkManager.OnServerStarted -= OnServerStarted;
         networkManager.OnClientConnectedCallback -= OnClientConnected;
         networkManager.OnClientDisconnectCallback -= OnClientDisconnected;
@@ -69,19 +72,22 @@ public class GameManager : MonoBehaviour
 
     public void BeginRace()
     {
+        //Se actualiza el mensaje del Waiting players para avisar que comienza la carrera
         UIManager.Instance._waitingPlayersText.SetText("Race Starting...");
+        //Corutina para cambiar el color del semáforo
         StartCoroutine(UpdateSemaphoreOrange());
     }
 
     IEnumerator StopSemaphore()
     {
         yield return new WaitForSeconds(1);
-        print("SALIENDOOOOOOOOOOOOOOOOOOOO");
+        //Se desactiva la cámara del semáforo para que no estorbe la visión
         UIManager.Instance._semaphoreCamera.SetActive(false);
     }
 
     IEnumerator UpdateSemaphoreOrange()
     {
+        //Se cambia antes de empezar el color del material a rojo para evitar problemas por el guardado de materiales
         UIManager.Instance._semaphore.UpdateToRed();
         yield return new WaitForSeconds(2);
         UIManager.Instance._semaphore.UpdateToOrange();
@@ -91,51 +97,25 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(2);
         UIManager.Instance._semaphore.UpdateToGreen();
-        //ntGameInfo.activateInputClientRpc(); // ESTO QUIZäs HAY QUE ACTIVARLO no lo he llegado a probar, pero con él funciona todo bien
+        //Se activa el Player Input de todos los jugadores instanciados para que puedan moverse
         EnablePlayerInputs();
+        //Se desactiva la UI de espera de race para cambiar a la de comienzo
         UIManager.Instance.DisableUIToStartRace();
         StartCoroutine(StopSemaphore());
     }
 
     public void EnablePlayerInputs()
     {
-        //print("numero readys: " + carsReadyToRace);
-
-        //print(NetworkManager.Singleton.SpawnManager.SpawnedObjectsList.Count);
-        
-        //ELEFANTE - DUDA: no entiendo porque motivo solo se activa el server!!!
+        //Se recorre la lista de objetos instanciados y, si tienen componente Player, se activa su Input
         foreach (var networkObject in NetworkManager.Singleton.SpawnManager.SpawnedObjectsList)
         {
-            //print("fuera " + networkObject.name);
-
             // Verificamos si el objeto tiene el componente Player
             if (networkObject.TryGetComponent<Player>(out var player))
             {
-                //print("dentro" + player.name);
                 player.EnablePlayerInput();
             }
         }
     }
-
-    //bool cocheEnCarrera = false;
-    //private void Update()
-    //{
-    //    //EVENTO para gestionar mejor lo siguiente:
-    //    //if ((SceneManager.GetActiveScene().name == mapScene) && !cocheEnCarrera)
-    //    //{
-    //    //    print("Hola");
-    //    //    currentCircuit = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<CircuitController>();
-    //    //    currentRace = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<RaceController>();
-    //    //    virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
-
-
-    //    //    ConnectToRace();
-    //    //    cocheEnCarrera = true;
-    //    //}
-    //    print("Local: " + mapScene);
-    //    //print("coches readys: " + carsReadyToRace);
-    //    //print("Network: "+ mapSelected.Value);
-    //}
 
     #region Network
     private void OnServerStarted()
@@ -149,48 +129,48 @@ public class GameManager : MonoBehaviour
         {
             connectedPlayers--;
             ntGameInfo.removeCarServerRpc();
-
-            //PENDIENTE - ELEFANTE: disminuir variable de personajes listos
         }
     }
 
-    public string nombrePlayer;
+    public string nombrePlayer; // Para depurar el nombre del player de cada cliente
+
     private void OnClientConnected(ulong obj)
     {
+        //Corutina para esperar a que la escena esté cargada para buscar todas las referencias necesarias
         StartCoroutine(WaitTillSceneLoaded());
+        //Búsqueda de referencias y asignación del prefab
         ConnectToRace();
-        
 
+        //El server se encarga de instanciar al jugador
         if (NetworkManager.Singleton.IsServer)
         {
+            //Se elije la posición en la carrera donde se debe spawnear al jugador de la lista de cada circuito
             Transform playerStartingPosition = currentCircuit._playersPositions[connectedPlayers].transform;
+            //Se instancia el jugador y se spawnea
             var player = Instantiate(prefabPlayer, playerStartingPosition);
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(obj);
-
-            //currentRace.AddPlayer(player.GetComponent<Player>());
-            
-            //actualPlayer = player.GetComponent<Player>();
+            //Se lleva la cuenta en el servidor del número de players conectados
             connectedPlayers++;
         }
     }
+
     private IEnumerator WaitTillSceneLoaded()
     {
         yield return new WaitUntil(() => SceneManager.GetActiveScene().isLoaded);
     }
 
-
-    public Material[] coloresMaterial;
-
-
     public void ConnectToRace()
     {
+        //Prefab de la lista de Networks
+        prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[0].Prefab;
+        //Referencias
         currentCircuit = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<CircuitController>();
         virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
         currentRace = GameObject.FindGameObjectWithTag("CircuitManager").GetComponent<RaceController>();
         ntGameInfo.checkpoints = GameObject.FindWithTag("Checkpoint").GetComponent<FindCheckPoints>().points;
         _chronometer = UIManager.Instance._chronometer.GetComponent<Chronometer>();
+        //Se escribe en la UI el joinCode
         UIManager.Instance._raceCodeUI.SetText(UIManager.Instance.joinCode);
-        prefabPlayer = networkManager.NetworkConfig.Prefabs.Prefabs[0].Prefab;
     }
     #endregion
 

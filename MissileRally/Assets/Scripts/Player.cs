@@ -13,33 +13,32 @@ public class Player : NetworkBehaviour
     public string Name { get; set; }
     public int ID { get; set; }
     public ulong ntID { get; set;}
-    
-
     // Race Info
     public GameObject car;
-    public CarController carController; //Esta variable la he puesto pública para poder cambiar la aguja en la UI pero no se si hay mejores opciones
-    //CONEJO: que vaya sumando cada vez que visita un checkpoint y se resetee por cada vuelta
-
-    public int CurrentPosition { get; set; }
+    public CarController carController;
     public int CurrentLap { get; set; }
 
     // Player Objects
-    private CinemachineVirtualCamera _vPlayerCamera;
-    public bool[] visitedCheckpoint = new bool[20];
-    public int count = 0;
-    public int rankPosition = 0;
-    public float coefRed = 1;
-    public float distancia = 0;
+    private CinemachineVirtualCamera _vPlayerCamera; //la cámara del jugador
+    public bool[] visitedCheckpoint = new bool[20]; //lista de checkpoints que ha visitado
+    /*FUNCIONAMIENTO CHECKPOINTS:
+        el jugador tiene que atravesar TODOS los checkpoints para contar una vuelta, si llega a la meta saltándose uno,
+        la vuelta no se contará y tendrá que repetirla
+    */
+    public int count = 0; //´variable que cuenta el número de checkpoints visitados
+    public int rankPosition = 0; //posición en el ranking
+    public float distancia = 0; //para saber cuanto lleva recorrido
 
     // información color
     NetworkVariable<int> networkColorIdx = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    //esta variable SOLO puede ser escrita por el propio owner, el servidor NO puede escribirla, solo leerla
+    //esta variable SOLO puede ser escrita por el propio owner del player, el servidor NO puede escribirla, solo leerla
     //para actualizar la información al resto de clientes
-    int colorCocheIdx;
+    int colorCocheIdx; //variable local del color
 
-    public TextMeshProUGUI _playerNameUI;
+    // información nombre para que se actualice al resto de jugadores
+    public TextMeshProUGUI _playerNameUI; //variable local del nombre
     NetworkVariable<NetworkString> networkPlayerName = new NetworkVariable<NetworkString>("Pepona", NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-
+    //al igual que la NetworkVariable del color, solo puede ser escrita por el owner del player
     public override string ToString()
     {
         return Name;
@@ -47,16 +46,14 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
+        //asignamos scripts y subscribimos métodos
         carController = car.GetComponent<CarController>();
         networkColorIdx.OnValueChanged += OnSetColor;
         networkPlayerName.OnValueChanged += OnSetName;
     }
-
-    
-
-    public void DisablePlayerInput()
+    public void DisablePlayerInput() //desactiva el input del jugador
     {
-        if (IsOwner)
+        if (IsOwner) //solo ÉL mismo puede desactivarse su input
         {
             GetComponent<PlayerInput>().enabled = false;
         }
@@ -64,61 +61,55 @@ public class Player : NetworkBehaviour
 
     #region Network
 
-    public override void OnNetworkSpawn()
+    public override void OnNetworkSpawn() //se ejecuta cuando un cliente es spawneado
     {
-        SetupPlayer();
+        SetupPlayer(); //iniciación del server
     }
     void SetupPlayer()
     {
-        SetupColor();
-        SetupName();
+        SetupColor(); //inicializar el color
+        SetupName(); //inicializar el nombre
         if (IsOwner)
         {
-            ntID = OwnerClientId;
-            ID = (int)ntID;
+            ntID = OwnerClientId; //id original
+            ID = (int)ntID; //id casteado a int
             
-            GameManager.Instance.actualPlayer = this;
-            //GameManager.Instance.currentRace.AddPlayer(this);
-
-            //Name = GameManager.Instance.actualPlayerInfo.playerName;
-            //GameManager.Instance.nombrePlayer = Name;
-
-            SetupCamera();
-
-            UIManager.Instance.botonCarReady.SetActive(true);
+            GameManager.Instance.actualPlayer = this; //asignamos el actual player en LOCAL
+            SetupCamera(); //inicialización de la cámara
+            UIManager.Instance.botonCarReady.SetActive(true); //activación del botón ready para dar comienzo a la carrera
         }
 
-        if (IsServer)
+        if (IsServer) //el servidor modifica variables UNICAS del server
         {
-            print("jugador añadido");
-            GameManager.Instance.ntGameInfo.currentPlayerInstance.Add(this);
-            GameManager.Instance.currentRace.AddPlayer(this);
-
-            GameManager.Instance.ntGameInfo.sendCodeClientRpc(GameManager.Instance.ntGameInfo.code);
+            //print("jugador añadido");
+            GameManager.Instance.ntGameInfo.currentPlayerInstance.Add(this); //añade una referencia al player que se acaba de instanciar
+            GameManager.Instance.currentRace.AddPlayer(this); //añade un player a la carrera actual
+            GameManager.Instance.ntGameInfo.sendCodeClientRpc(GameManager.Instance.ntGameInfo.code); //actualiza y envía el código de acceso a los clientes
         }
     }
 
     private void SetupName()
     {
-        if (IsOwner)
+        if (IsOwner) 
         {
-            print("entro a actualizar Nombre");
+            //actualiza la NetworkVariable y la variable local del player del nombre
+            //print("entro a actualizar Nombre");
             Name = GameManager.Instance.actualPlayerInfo.playerName;
             GameManager.Instance.nombrePlayer = Name;
             networkPlayerName.Value = Name;
             OnSetName(networkPlayerName.Value, networkPlayerName.Value);
         }
-        else
+        else //para que la información se sincronice tanto en host como en cliente
         {
             OnSetName(networkPlayerName.Value, networkPlayerName.Value);
         }
     }
 
-    void SetupColor()
+    void SetupColor() //mismo funcionamiento que el anterior pero con el color
     {
         if (IsOwner)
         {
-            print("entro a actualizar color");
+            //print("entro a actualizar color");
             colorCocheIdx = GameManager.Instance.actualPlayerInfo.playerCar;
             networkColorIdx.Value = colorCocheIdx;
             OnSetColor(0, networkColorIdx.Value);
@@ -130,31 +121,31 @@ public class Player : NetworkBehaviour
     }
 
 
-    void OnSetColor(int previous, int newM)
+    void OnSetColor(int previous, int newM) //cuando la NetworkVariable del color modifica su valor
     {
         MeshRenderer body = car.transform.GetChild(0).GetComponent<MeshRenderer>();
         Material[] mat = body.materials;
-        print("material: " + newM);
+        //print("material: " + newM);
         mat[1] = GameManager.Instance.coloresMaterial[newM];
         body.materials = mat;
         /*Se iguala el material otra vez, porque por defecto body.materials devuelve una copia del valor,
          por lo que hay que reflejar los cambios*/
     }
 
-    private void OnSetName(NetworkString previousValue, NetworkString newValue)
+    private void OnSetName(NetworkString previousValue, NetworkString newValue) //cuando la NetworkVariable del nombre modifica su valor
     {
         _playerNameUI.SetText(newValue.ToString());
     }
 
-    public void EnablePlayerInput()
+    public void EnablePlayerInput() //activa el player input
     {
-        if (IsOwner)
+        if (IsOwner) //solo el owner puede activarselo a el mismo
         {
             GetComponent<PlayerInput>().enabled = true;
         }
     }
 
-    void SetupCamera()
+    void SetupCamera() //inicialización de la cámara
     {
         _vPlayerCamera = GameManager.Instance.virtualCamera;
 
@@ -164,15 +155,14 @@ public class Player : NetworkBehaviour
     #endregion
 
     [ClientRpc]
-    public void orderRaceClientRpc(int orden)
+    public void orderRaceClientRpc(int orden) //clientRpc para actualizar el ranking actual en el que estoy (puesto)
     {
-        print("clientRPc");
-        if (IsOwner)
+        //print("clientRPc");
+        if (IsOwner) //solo el owner puede hacerse cambios a si mismo
         {
-            //actualizar ui
             UIManager.Instance.UpdateCarOrderNumberUI(orden);
-            print("mi puesto es: " + orden);
-            print(ID);
+            //print("mi puesto es: " + orden);
+            //print(ID);
         }
     }
 
@@ -197,9 +187,8 @@ public class Player : NetworkBehaviour
     [ServerRpc]
     public void OnMoveServerRpc(Vector2 input)
     {
-        //COMENTAR - ELEFANTE: no es buena idea reducirlo aqui, no se reduce
-        carController.InputAcceleration = input.y * coefRed;
-        carController.InputSteering = input.x * coefRed;
+        carController.InputAcceleration = input.y;
+        carController.InputSteering = input.x;
     }
     [ServerRpc]
     public void OnAttackServerRpc()

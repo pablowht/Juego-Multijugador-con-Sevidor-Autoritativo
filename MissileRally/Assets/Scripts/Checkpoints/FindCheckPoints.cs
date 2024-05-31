@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class FindCheckPoints : MonoBehaviour
 {
-    public CheckPoint[] points;
+    public CheckPoint[] points; //guarda los checkpoints de cada circuito
 }

@@ -17,7 +17,7 @@ public class CircuitController : MonoBehaviour
 
     void Start()
     {
-        _circuitPath = GetComponentInChildren<LineRenderer>(); //Buscamos el camino creado con el objeto "LineRenderer"
+        _circuitPath = GetComponentInChildren<LineRenderer>(); //Buscamos el camino creado con el gameObject "LineRenderer"
 
         int numPoints = _circuitPath.positionCount;
         _pathPos = new Vector3[numPoints];

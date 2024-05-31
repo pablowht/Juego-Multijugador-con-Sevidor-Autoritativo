@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class PlayerInfo
 {
+    //Clase con alguna de la información del jugador necesaria
     public string playerName;
     public int playerId;
     public int playerCar;

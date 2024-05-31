@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class Chronometer : MonoBehaviour
+public class Chronometer : MonoBehaviour 
 {
     //Clase creada para apuntar el tiempo de cada coche
     private float elapsedTime = 0f; 
@@ -17,7 +17,6 @@ public class Chronometer : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _lapTime2;
     [SerializeField] private TextMeshProUGUI _lapTime3;
     
-    //ESTO QUE ES PABLO ELEFANTE
     public string[] _stringLapTimes = new string[3];
 
     private TextMeshProUGUI[] _TMPLapTimes = new TextMeshProUGUI[3]; 
@@ -70,7 +69,7 @@ public class Chronometer : MonoBehaviour
         _stringLapTimes[lapNumber] = currentTime;
         _TMPLapTimes[lapNumber].SetText(currentTime);
         _TMPLapTimes[lapNumber].gameObject.SetActive(true);
-        Debug.Log($"Lap {lapNumber} time captured: {currentTime}"); //Muestra la vuelta y el tiempo en el que se ha dado esta
+        //Debug.Log($"Lap {lapNumber} time captured: {currentTime}"); //Muestra la vuelta y el tiempo en el que se ha dado esta
     }
 
     private void UpdateChronometerUI() //Actualiza el cronometro en la IU
@@ -79,6 +78,7 @@ public class Chronometer : MonoBehaviour
         chronometerText.text = formattedTime;
     }
 
+    //Formatea el tiempo en el formato requerido
     private string GetFormattedTime(float time)
     {
         int minutes = Mathf.FloorToInt(time / 60F);

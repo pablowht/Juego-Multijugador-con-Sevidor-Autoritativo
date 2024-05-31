@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SemaphoreController : MonoBehaviour
 {
+    //Clase para cambiar el color del material del semáforo, para empezar la carrera
     Color _red = new Color(1.0f, 0.0f, 0.13f);
     Color _orange = new Color(1.0f, 0.34f, 0.0f);
     Color _green = new Color(0.39f, 1.0f, 0.0f);

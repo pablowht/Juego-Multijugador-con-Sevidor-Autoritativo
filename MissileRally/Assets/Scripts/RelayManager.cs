@@ -8,12 +8,11 @@ using Unity.Services.Relay.Models;
 using UnityEngine;
 using System.Threading.Tasks;
 
-public class RelayManager : MonoBehaviour
+public class RelayManager : MonoBehaviour //se han implementado los métodos básicos de acuerdo a la documentación de Relay
 {
-    const int maxConnections = 2;
+    const int maxConnections = 6;
 
-    //public string joinCode = "Código...";
-
+    //Singleton DontDestroy para persistencia entre escenas
     public static RelayManager Instance { get; private set; }
 
     void Awake()
@@ -39,11 +38,10 @@ public class RelayManager : MonoBehaviour
         Allocation allocation = await RelayService.Instance.CreateAllocationAsync(maxConnections);
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(allocation, "dtls"));
         string code = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-        //GameManager.Instance.joinCodeNumber = UIManager.Instance.joinCode;
         NetworkManager.Singleton.StartHost();
-        print(code);
-        GameManager.Instance.ntGameInfo.setJoinCodeServerRpc(code);
-        UIManager.Instance._raceCodeUI.SetText(GameManager.Instance.ntGameInfo.code);
+        //print(code);
+        GameManager.Instance.ntGameInfo.setJoinCodeServerRpc(code); //le envio al servidor el código de la sala
+        UIManager.Instance._raceCodeUI.SetText(GameManager.Instance.ntGameInfo.code); //actualizo la UI del host con ese código
     }
 
     async public Task StartClient(string joinCodeInput)
@@ -56,9 +54,6 @@ public class RelayManager : MonoBehaviour
 
         var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode: joinCodeInput);
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
-        //print(UIManager.Instance.joinCode);
-        //print(joinAllocation);
-        //GameManager.Instance.joinCodeNumber = UIManager.Instance.joinCode;
         NetworkManager.Singleton.StartClient();
     }
 }

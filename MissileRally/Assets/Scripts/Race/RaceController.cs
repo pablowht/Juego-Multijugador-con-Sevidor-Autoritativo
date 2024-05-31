@@ -15,7 +15,7 @@ public class RaceController : NetworkBehaviour
     private void Start()
     {
         if (_circuitController == null) _circuitController = GetComponent<CircuitController>();
-
+        //Esfera del jugador para la "LineRenderer"
         //_debuggingSpheres = new GameObject[GameManager.Instance.numPlayers];
         //for (int i = 0; i < GameManager.Instance.numPlayers; ++i)
         //{
@@ -62,30 +62,24 @@ public class RaceController : NetworkBehaviour
 
     public void UpdateRaceProgress()
     {
-        // Update car arc-lengths
+        // Actualizar car arc-lengths
         float[] arcLengths = new float[_players.Count];
 
         for (int i = 0; i < _players.Count; ++i)
         {
             arcLengths[i] = ComputeCarArcLength(i);
             _players[i].distancia = ComputeCarArcLength(i);
-            //_players[i].distancia = ComputeCarArcLength(i);
-
-            //print(arcLengths[i]);
+            //print("ArcLengths" + arcLengths[i]);
         }
 
-        //Array.Sort(arcLengths);
-        //_players.Sort(new PlayerInfoComparer(arcLengths)); //******
-        _players.Sort(new PlayerInfoComparer(arcLengths)); //******
+        _players.Sort(new PlayerInfoComparer(arcLengths));
         
 
-        //string myRaceOrder = "";
         int raceCount = 0;
         foreach (var player in _players)
         {
             raceCount++;
-            player.orderRaceClientRpc(raceCount);
-            // myRaceOrder += player.ID + " ";
+            player.orderRaceClientRpc(raceCount); //se le envia al cliente su posición en el ranking
         }
         // Debug.Log("Race order: " + myRaceOrder);
     }
@@ -101,7 +95,6 @@ public class RaceController : NetworkBehaviour
         float minArcL =
             this._circuitController.ComputeClosestPointArcLength(carPos, out _, out var carProj, out _);
 
-        //this._debuggingSpheres[id].transform.position = carProj;
 
         if (this._players[id].CurrentLap == 0)
         {
