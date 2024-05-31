@@ -28,7 +28,7 @@ public class UIManager : MonoBehaviour
     [Header("Ranking")]
     [SerializeField] private GameObject _rankingUI;
     [SerializeField] private GameObject _restartButton;
-    [SerializeField] private GameObject _exitButton;
+    [SerializeField] public GameObject _exitButton;
     [SerializeField] private GameObject _cenitalCamera;
     [SerializeField] private TextMeshProUGUI[] _playerList;
     public string rankingText; //String donde se guarda la posición final del player, su nombre y su tiempo
@@ -93,6 +93,7 @@ public class UIManager : MonoBehaviour
     public void updateSpeedometer()
     {
         vehicleSpeed = GameManager.Instance.actualPlayer.carController.Speed;
+        print(GameManager.Instance.actualPlayer.carController.Speed);
         needlePosition = startNeedlePosition - endNeedlePosition;
         float temp = vehicleSpeed / 60;
         _speedometerNeedle.transform.eulerAngles = new Vector3 (0, 0, (startNeedlePosition - temp * needlePosition));

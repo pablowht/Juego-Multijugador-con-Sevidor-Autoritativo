@@ -22,13 +22,10 @@ public class CarController : NetworkBehaviour
     public float InputSteering { get; set; }
     public float InputBrake { get; set; }
 
-    //private PlayerInfo m_PlayerInfo;
-
     public Rigidbody _rigidbody;
     private float _steerHelper = 0.8f;
-    private float _currentSpeed = 0;
+    private float _currentSpeed;
 
-    //He puesto pública la velocidad pero privada su set para poder utilizarla para la needle
     public float Speed
     {
         get => _currentSpeed;
@@ -38,6 +35,7 @@ public class CarController : NetworkBehaviour
             _currentSpeed = value;
             if (OnSpeedChangeEvent != null)
                 OnSpeedChangeEvent(_currentSpeed);
+            SpeedometerClientRpc(_currentSpeed);
         }
     }
 
@@ -52,6 +50,7 @@ public class CarController : NetworkBehaviour
     public void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _currentSpeed = 0;
     }
 
     public void Update()
@@ -234,6 +233,16 @@ public class CarController : NetworkBehaviour
             //print("Dentro id" + GameManager.Instance.actualPlayer.ID);
             //Respawn
             GameManager.Instance.ntGameInfo.restorePositionServerRpc(GameManager.Instance.actualPlayer.ID);
+        }
+    }
+
+    [ClientRpc]
+
+    public void SpeedometerClientRpc(float speedSpeedometer)
+    {
+        if (IsOwner)
+        {
+            _currentSpeed = speedSpeedometer;
         }
     }
 

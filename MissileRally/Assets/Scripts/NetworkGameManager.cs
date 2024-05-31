@@ -52,7 +52,17 @@ public class NetworkGameManager : NetworkBehaviour //CONTROLADA UNICAMENTE POR E
             RaceFinishClientRpc(i, rankingPos); //se envia a los clientes la información (solo se actualiza si el cliente ha acabado) del ranking para actualizarla
             i++;
         }
-        
+        if (GameManager.Instance.finishedPlayers == GameManager.Instance.connectedPlayers)
+        {
+            //Cuando todos los jugadores acaben sale el botón de cerrar en todos los clientes
+            ExitButtonOnRaceEndClientRpc();
+        }
+    }
+    
+    [ClientRpc]
+    private void ExitButtonOnRaceEndClientRpc()
+    {
+        UIManager.Instance._exitButton.SetActive(true);
     }
 
     [ClientRpc]
