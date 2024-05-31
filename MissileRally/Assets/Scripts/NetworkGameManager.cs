@@ -24,7 +24,7 @@ public class NetworkGameManager : NetworkBehaviour
 
         UpdateUIClientRpc(serverCountCar);
 
-        if (serverCountCar >= 1)
+        if (serverCountCar >= 2)
         {
             GameManager.Instance.BeginRace();
             BeginRaceClientRpc();
@@ -72,33 +72,8 @@ public class NetworkGameManager : NetworkBehaviour
     [ClientRpc]
     public void BeginRaceClientRpc()
     {
-        //UIManager.Instance._waitingPlayersText.SetText("Race Starting...");
         GameManager.Instance.BeginRace();
-        //GameManager.Instance.StartCoroutine(UpdateSemaphoreOrange());
-        //StartCoroutine(UpdateSemaphoreOrange());
     }
-
-    //IEnumerator UpdateSemaphoreOrange()
-    //{
-    //    UIManager.Instance._semaphore.UpdateToRed();
-    //    yield return new WaitForSeconds(2);
-    //    UIManager.Instance._semaphore.UpdateToOrange();
-    //    StartCoroutine(UpdateSemaphoreGreen());
-    //}
-    //IEnumerator UpdateSemaphoreGreen()
-    //{
-    //    yield return new WaitForSeconds(2);
-    //    UIManager.Instance._semaphore.UpdateToGreen();
-    //    activateInputClientRpc();
-    //    UIManager.Instance.DisableUIToStartRace();
-    //    StartCoroutine(StopSemaphore());
-    //}
-
-    //IEnumerator StopSemaphore()
-    //{
-    //    yield return new WaitForSeconds(1);
-    //    UIManager.Instance._semaphoreCamera.SetActive(false);
-    //}
 
     [ClientRpc]
     public void UpdateUIClientRpc(int c)
