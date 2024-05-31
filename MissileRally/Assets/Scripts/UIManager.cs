@@ -72,6 +72,44 @@ public class UIManager : MonoBehaviour
     //    //if (carRaceOn) { updateSpeedometer(); }
     //}
 
+    #region Ranking
+
+    [Header("Ranking")]
+    [SerializeField] private GameObject _rankingUI;
+    [SerializeField] private GameObject _restartButton;
+    [SerializeField] private GameObject _exitButton;
+    [SerializeField] private GameObject _cenitalCamera;
+    [SerializeField] private TextMeshProUGUI[] _playerList;
+
+    public void OpenRanking()
+    {
+        _rankingUI.SetActive(true);
+        WritePlayerInRanking(0);
+        _speedometer.SetActive(false);
+        GameManager.Instance.actualPlayer.DisablePlayerInput();
+        GameManager.Instance.actualPlayer.car.SetActive(false);
+        _cenitalCamera.SetActive(true);
+    }
+
+    public void WritePlayerInRanking(int orderPlayer)
+    {
+        _playerList[orderPlayer].SetText(string.Format("{0}. {1, -20} {2}", orderPlayer+1, GameManager.Instance.actualPlayer.Name, _chronometer.GetComponent<Chronometer>()._stringLapTimes[2].ToString()));
+    }
+
+    public void RestartLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+
+    public void ExitApplication()
+    {
+        Application.Quit();
+    }
+
+    #endregion
+
+
     #region GameInfo UI
 
     [Header("Speedometer Info")]

@@ -20,6 +20,7 @@ TagManager:
   - Semaphore Virtual
   - Semaphore
   - Car
+  - Cenital Camera
   layers:
   - Default
   - TransparentFX
@@ -27,10 +28,10 @@ TagManager:
   - Player
   - Water
   - UI
-  - Smeaphore Camera Layer
+  - Semaphore Camera Layer
   - Main Camera Layer
   - Car
-  - 
+  - Cenital Camera Layer
   - 
   - 
   - 

@@ -1,8 +1,11 @@
 using Cinemachine;
 using System;
+using TMPro;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 
 public class Player : NetworkBehaviour
 {
@@ -33,6 +36,9 @@ public class Player : NetworkBehaviour
     //para actualizar la información al resto de clientes
     int colorCocheIdx;
 
+    public TextMeshProUGUI _playerNameUI;
+    NetworkVariable<NetworkString> networkPlayerName = new NetworkVariable<NetworkString>("Pepona", NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
     public override string ToString()
     {
         return Name;
@@ -42,6 +48,17 @@ public class Player : NetworkBehaviour
     {
         carController = car.GetComponent<CarController>();
         networkColorIdx.OnValueChanged += OnSetColor;
+        networkPlayerName.OnValueChanged += OnSetName;
+    }
+
+    
+
+    public void DisablePlayerInput()
+    {
+        if (IsOwner)
+        {
+            GetComponent<PlayerInput>().enabled = false;
+        }
     }
 
     #region Network
@@ -54,6 +71,7 @@ public class Player : NetworkBehaviour
     void SetupPlayer()
     {
         SetupColor();
+        SetupName();
         if (IsOwner)
         {
             ntID = OwnerClientId;
@@ -62,9 +80,9 @@ public class Player : NetworkBehaviour
             GameManager.Instance.actualPlayer = this;
             GameManager.Instance.currentRace.AddPlayer(this);
 
-            Name = GameManager.Instance.actualPlayerInfo.playerName;
-            print(Name);
-            GameManager.Instance.nombrePlayer = Name;
+            //Name = GameManager.Instance.actualPlayerInfo.playerName;
+            //GameManager.Instance.nombrePlayer = Name;
+
             SetupCamera();
 
             UIManager.Instance.botonCarReady.SetActive(true);
@@ -75,6 +93,22 @@ public class Player : NetworkBehaviour
             print("jugador añadido");
             GameManager.Instance.ntGameInfo.currentPlayerInstance.Add(this);
             GameManager.Instance.ntGameInfo.sendCodeClientRpc(GameManager.Instance.ntGameInfo.code);
+        }
+    }
+
+    private void SetupName()
+    {
+        if (IsOwner)
+        {
+            print("entro a actualizar Nombre");
+            Name = GameManager.Instance.actualPlayerInfo.playerName;
+            GameManager.Instance.nombrePlayer = Name;
+            networkPlayerName.Value = Name;
+            OnSetName(networkPlayerName.Value, networkPlayerName.Value);
+        }
+        else
+        {
+            OnSetName(networkPlayerName.Value, networkPlayerName.Value);
         }
     }
 
@@ -93,6 +127,7 @@ public class Player : NetworkBehaviour
         }
     }
 
+
     void OnSetColor(int previous, int newM)
     {
         MeshRenderer body = car.transform.GetChild(0).GetComponent<MeshRenderer>();
@@ -103,6 +138,19 @@ public class Player : NetworkBehaviour
         /*Se iguala el material otra vez, porque por defecto body.materials devuelve una copia del valor,
          por lo que hay que reflejar los cambios*/
     }
+
+    private void OnSetName(NetworkString previousValue, NetworkString newValue)
+    {
+        _playerNameUI.SetText(newValue.ToString());
+    }
+    //private void OnSetName(ForceNetworkSerializeByMemcpy<FixedString32Bytes> previousValue, ForceNetworkSerializeByMemcpy<FixedString32Bytes> newValue)
+    //{
+    //    _playerNameUI.SetText(newValue.ToString());
+    //}
+    //void OnSetName(FixedString32Bytes previousValue, FixedString32Bytes newValue)
+    //{
+    //    _playerNameUI.SetText(newValue.ToString());
+    //}
 
     public void EnablePlayerInput()
     {

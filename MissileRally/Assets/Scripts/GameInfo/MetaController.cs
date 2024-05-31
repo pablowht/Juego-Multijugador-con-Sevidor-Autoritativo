@@ -7,7 +7,7 @@ using UnityEngine;
 public class MetaController : MonoBehaviour
 {
     public int lapCount = 0;
-    public int maxLaps = 3;
+    public int maxLaps = 3; //ELEFANTE cambiar a 3
 
     private void OnTriggerEnter(Collider other)
     {
@@ -45,6 +45,8 @@ public class MetaController : MonoBehaviour
                 UIManager.Instance._semaphore.UpdateToRed();
                 GameManager.Instance._chronometer.UpdateLapTime(maxLaps - 1);
                 GameManager.Instance._chronometer.StopChronometer();
+
+                UIManager.Instance.OpenRanking();
             }
         }
     }

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44981885, g: 0.49708015, b: 0.56053877, a: 1}
+  m_IndirectSpecularColor: {r: 0.4498192, g: 0.49708056, b: 0.56053954, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -850,7 +850,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae8275834bfda434bb7493d9e7cf05ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  joinCode: "C\xF3digo de la carrera..."
 --- !u!4 &161786841
 Transform:
   m_ObjectHideFlags: 0
@@ -1345,6 +1344,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   checkpoints: []
   currentPlayerInstance: []
+  code: 
 --- !u!1001 &544946640
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1878,6 +1878,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _raceCodeUI: {fileID: 0}
+  _rankingUI: {fileID: 0}
+  _playerList: []
   _speedometer: {fileID: 0}
   _speedometerNeedle: {fileID: 0}
   _chronometer: {fileID: 0}
@@ -1895,6 +1897,7 @@ MonoBehaviour:
   _raceCodeInput: {fileID: 2121813500}
   _carSelectionUI: {fileID: 1938961201}
   _mapSelectionUI: {fileID: 2126364734}
+  joinCode: "C\xF3digo..."
   cars:
   - {fileID: 1400084528}
   - {fileID: 552469204}
@@ -2985,7 +2988,7 @@ MonoBehaviour:
   m_CharacterValidation: 0
   m_RegexValue: 
   m_GlobalPointSize: 14
-  m_CharacterLimit: 15
+  m_CharacterLimit: 10
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
